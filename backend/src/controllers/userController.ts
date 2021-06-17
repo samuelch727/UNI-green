@@ -22,9 +22,12 @@ export function addUser(req: any, res: any) {
 
           try {
             const savedUser = await newUser.save();
-            return res.status(201).json(savedUser);
+            return res.status(201).json({
+              accountCreated: true,
+            });
           } catch (err: any) {
             return res.status(500).json({
+              accountCreated: false,
               message: err,
             });
           }
@@ -33,14 +36,18 @@ export function addUser(req: any, res: any) {
     } else {
       if (user.username == req.body.username) {
         return res.status(401).json({
+          accountCreated: false,
           message: "Username exist. Fail to create account",
         });
       }
       if (user.email == req.body.email) {
         return res.status(401).json({
+          accountCreated: false,
           message: "Email exist. Fail to create account",
         });
       }
     }
   });
 }
+
+export function login(req: any, res: any) {}
