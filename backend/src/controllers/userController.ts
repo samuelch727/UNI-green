@@ -143,14 +143,14 @@ export function addSubUser(req: any, res: any) {
       });
       try {
         const result = await newSubUser.save();
-        res.status(201).json(result);
+        return res.status(201).json(result);
       } catch (err: any) {
-        res.status(401).json({
+        return res.status(401).json({
           message: err,
         });
       }
     } else {
-      res.status(401).json({
+      return res.status(401).json({
         message: "User Already Created",
       });
     }
