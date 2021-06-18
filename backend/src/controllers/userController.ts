@@ -1,12 +1,11 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import internal from "stream";
 dotenv.config({ path: __dirname + "/.env" });
 const User = require("../models/User");
 
-export function addUser(req: any, res: any) {
+export function addUser(req: any, res: any, next: any) {
   User.findOne({
     $or: [{ email: req.body.email }, { username: req.body.username }],
   }).then((user: any) => {
@@ -25,10 +24,19 @@ export function addUser(req: any, res: any) {
           });
 
           try {
-            await newUser.save();
-            return res.status(201).json({
-              accountCreated: true,
-            });
+            const createdUser = await newUser.save();
+            const tokenPayload = {
+              userID: createdUser._id,
+              email: createdUser.email,
+              username: createdUser.username,
+            };
+            req.body.tokenPayload = tokenPayload;
+            const user = {
+              _id: createdUser._id,
+            };
+            req.body.user = user;
+            next();
+            return;
           } catch (err: any) {
             return res.status(500).json({
               accountCreated: false,
