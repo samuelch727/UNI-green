@@ -9,4 +9,4 @@ const requestSchema = new mongoose.Schema({
   price: { type: mongoose.Types.Decimal128, required: true },
 });
 
-module.exports = mongoose.model("User", requestSchema);
+module.exports = mongoose.model("Request", requestSchema);

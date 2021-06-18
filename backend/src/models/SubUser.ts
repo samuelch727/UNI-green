@@ -9,4 +9,4 @@ const subUserSchema = new mongoose.Schema({
   sid: { type: String, required: true },
 });
 
-module.exports = mongoose.model("User", subUserSchema);
+module.exports = mongoose.model("SubUser", subUserSchema);
