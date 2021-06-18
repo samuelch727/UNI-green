@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import internal from "stream";
 dotenv.config({ path: __dirname + "/.env" });
 const User = require("../models/User");
 

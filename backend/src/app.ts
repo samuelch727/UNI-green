@@ -17,7 +17,7 @@ const usersRouter = require("./routes/user");
 app.use("/api/user/", usersRouter);
 
 app.get("/", (req, res) => {
-  res.send("test");
+  res.send("Test");
 });
 
 app.listen(5000, () => {
