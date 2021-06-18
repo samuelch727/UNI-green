@@ -83,32 +83,18 @@ export function loginUser(req: any, res: any, next: any) {
           });
         }
         if (result) {
-          if (process?.env?.ACCESS_TOKEN_SECRET) {
-            const token = jwt.sign(
-              {
-                email: users[0].email,
-                userID: users[0]._id,
-                username: users[0].username,
-              },
-              process.env.ACCESS_TOKEN_SECRET,
-              {
-                expiresIn: "30m",
-              }
-            );
-            const user = {
-              _id: users[0]._id,
-              token,
-            };
-            req.body.user = user;
-            next();
-            return;
-          } else {
-            console.log("Missing access token.");
-            return res.status(501).json({
-              login: false,
-              message: "Internal server error.",
-            });
-          }
+          const tokenPayload = {
+            email: users[0].email,
+            userID: users[0]._id,
+            username: users[0].username,
+          };
+          req.body.tokenPayload = tokenPayload;
+          const user = {
+            _id: users[0]._id,
+          };
+          req.body.user = user;
+          next();
+          return;
         }
         return res.status(400).json({
           login: false,

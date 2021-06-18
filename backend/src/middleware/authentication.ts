@@ -42,3 +42,27 @@ export function authenticateToken(req: any, res: any, next: any) {
     );
   }
 }
+
+export function generateToken(req: any, res: any, next: any) {
+  if (process?.env?.ACCESS_TOKEN_SECRET) {
+    const token = jwt.sign(
+      req.body.tokenPayload,
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "30m",
+      }
+    );
+    req.body.user = {
+      ...req.body.user,
+      token,
+    };
+    next();
+    return;
+  } else {
+    console.log("Missing access token.");
+    return res.status(501).json({
+      login: false,
+      message: "Internal server error.",
+    });
+  }
+}
