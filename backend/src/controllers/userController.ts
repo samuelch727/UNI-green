@@ -124,3 +124,35 @@ export function sendUserData(req: any, res: any) {
     user: req.body.user,
   });
 }
+
+const SubUser = require("../models/SubUser");
+
+export function addSubUser(req: any, res: any) {
+  SubUser.findOne({
+    sid: req.body.sid,
+    schoolid: req.body.schoolid,
+  }).then(async (user: any) => {
+    if (!user) {
+      const newSubUser = SubUser({
+        userid: req.body.userid,
+        schoolid: req.body.schoolid,
+        permissionLevel: 0,
+        verify: false,
+        name: req.body.name,
+        sid: req.body.sid,
+      });
+      try {
+        const result = await newSubUser.save();
+        res.status(201).json(result);
+      } catch (err: any) {
+        res.status(401).json({
+          message: err,
+        });
+      }
+    } else {
+      res.status(401).json({
+        message: "User Already Created",
+      });
+    }
+  });
+}
