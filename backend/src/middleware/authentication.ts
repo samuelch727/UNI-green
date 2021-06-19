@@ -36,7 +36,7 @@ export function authenticateToken(req: any, res: any, next: any) {
           }
         }
         return res.status(401).json({
-          message: "invalid token",
+          message: "Internal server error",
         });
       }
     );

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import internal from "stream";
+import { error } from "console";
 dotenv.config({ path: __dirname + "/.env" });
 var User = mongoose.model("User");
 
@@ -97,6 +98,8 @@ export function loginUser(req: any, res: any, next: any) {
         message: "Incorrect credentials.",
       });
     } else {
+      //@ts-ignore
+      console.log(users[0].subusers);
       // check password
       bcrypt.compare(req.body.password, users[0].password, (err, result) => {
         // handle incorrect password
@@ -119,6 +122,7 @@ export function loginUser(req: any, res: any, next: any) {
             _id: users[0]._id,
           };
           req.body.user = user;
+
           next();
           return;
         }
@@ -155,8 +159,8 @@ export function addSubUser(req: any, res: any) {
   SubUser.findOne({
     sid: req.body.sid,
     schoolid: req.body.schoolid,
-  }).then(async (user: any) => {
-    if (!user) {
+  }).then(async (subUser: any) => {
+    if (!subUser) {
       const newSubUser = SubUser({
         userid: req.body.userid,
         schoolid: req.body.schoolid,
@@ -167,7 +171,24 @@ export function addSubUser(req: any, res: any) {
       });
       try {
         const result = await newSubUser.save();
-        return res.status(201).json(result);
+        //res.status(201).json(result);
+        // add subuser id to user
+        console.log(result._id);
+        User.findByIdAndUpdate(
+          req.body.userid,
+          { $push: { subsuers: result._id } },
+          { new: true, upsert: true }
+        )
+          .then((user) => {
+            //@ts-ignore
+            console.log(user.subusers);
+            return res.status(201).json(user);
+          })
+          .catch((error) => {
+            return res.status(401).json({
+              message: error,
+            });
+          });
       } catch (err: any) {
         return res.status(401).json({
           message: err,
@@ -177,6 +198,30 @@ export function addSubUser(req: any, res: any) {
       return res.status(401).json({
         message: "User Already Created",
       });
+    }
+  });
+}
+
+export function updatePassword(req: any, res: any) {
+  bcrypt.hash(req.body.newpassword, 10, (err: any, hash: any) => {
+    if (err) {
+      console.log("error");
+      return res.status(501).json({
+        message: err,
+      });
+    }
+    if (hash) {
+      User.findByIdAndUpdate(req.body.userid, { password: hash })
+        .then((user) => {
+          return res.status(201).json({
+            message: "password rested",
+          });
+        })
+        .catch((err) => {
+          return res.status(501).json({
+            message: err,
+          });
+        });
     }
   });
 }

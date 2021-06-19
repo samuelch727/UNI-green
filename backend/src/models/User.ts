@@ -16,9 +16,27 @@ const UserSchema = new mongoose.Schema(
       match: [/\S+@\S+\.\S+/, "is invalid"],
       index: true,
     },
-    subUserId: [{ type: mongoose.Types.ObjectId, ref: "SubUser" }],
+    subusers: [{ type: mongoose.Schema.Types.ObjectId, ref: "SubUser" }],
   },
   { timestamps: true }
 );
+
+// UserSchema.methods.addSubUser = function (
+//   userID: any,
+//   subUserID: any,
+//   cb: (res: boolean) => void
+// ) {
+//   console.log("adding subuser");
+//   //@ts-ignore
+//   console.log("Found user with name: " + this.username);
+
+//   try {
+//     this.update(
+//       {_id: userID},
+//       {$push:{subUserID}},
+//       done
+//     )
+//   }
+// };
 
 mongoose.model("User", UserSchema);
