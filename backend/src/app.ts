@@ -13,12 +13,16 @@ mongoose.connect(
   () => console.log("Database connected")
 );
 
+require("./models/Category");
+require("./models/Order");
+require("./models/Product");
+require("./models/Request");
+require("./models/School");
+require("./models/SubUser");
+require("./models/User");
+
 const usersRouter = require("./routes/user");
 app.use("/api/user/", usersRouter);
-
-app.get("/", (req, res) => {
-  res.send("Test");
-});
 
 app.listen(5000, () => {
   console.log("Server running");

@@ -3,19 +3,23 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import internal from "stream";
 dotenv.config({ path: __dirname + "/.env" });
-const User = require("../models/User");
+var User = mongoose.model("User");
 
 export function addUser(req: any, res: any, next: any) {
   User.findOne({
+    // check for duplication
     $or: [{ email: req.body.email }, { username: req.body.username }],
   }).then((user: any) => {
     if (!user) {
+      // password hashing
       bcrypt.hash(req.body.password, 10, async (err: any, hash: any) => {
+        // handle password hashing error
         if (err) {
           return res.status(500).json({
             message: err,
           });
         } else {
+          // create new user
           const newUser = new User({
             username: req?.body?.username,
             password: hash,
@@ -24,20 +28,27 @@ export function addUser(req: any, res: any, next: any) {
           });
 
           try {
+            // save new user to database "Users" collection
             const createdUser = await newUser.save();
+
+            // create and save token data for token generation
             const tokenPayload = {
               userID: createdUser._id,
-              email: createdUser.email,
-              username: createdUser.username,
+              email: req?.body?.email,
+              username: req?.body?.username,
             };
             req.body.tokenPayload = tokenPayload;
+
+            // saving user data for response
             const user = {
               _id: createdUser._id,
             };
             req.body.user = user;
+
             next();
             return;
           } catch (err: any) {
+            //handle error when saving new user data
             return res.status(500).json({
               accountCreated: false,
               message: err,
@@ -66,10 +77,12 @@ export function loginUser(req: any, res: any, next: any) {
   User.aggregate([
     {
       $match: {
+        // search for user matching either email or username
         $or: [{ email: req.body.email }, { username: req.body.username }],
       },
     },
     {
+      // retrive only _id, username, email, password from database
       $project: {
         _id: 1,
         username: 1,
@@ -78,18 +91,23 @@ export function loginUser(req: any, res: any, next: any) {
       },
     },
   ]).then((users: any) => {
+    // handle no match found
     if (users.length < 1) {
       return res.status(400).json({
         message: "Incorrect credentials.",
       });
     } else {
+      // check password
       bcrypt.compare(req.body.password, users[0].password, (err, result) => {
+        // handle incorrect password
         if (err) {
           return res.status(400).json({
             login: false,
             message: "Incorrect credentials.",
           });
         }
+
+        // handle correct password
         if (result) {
           const tokenPayload = {
             email: users[0].email,
@@ -113,6 +131,12 @@ export function loginUser(req: any, res: any, next: any) {
   });
 }
 
+/**
+ * response with user data
+ * @param req income request
+ * @param res response
+ * @returns
+ */
 export function sendUserData(req: any, res: any) {
   return res.status(200).json({
     user: req.body.user,
@@ -121,7 +145,13 @@ export function sendUserData(req: any, res: any) {
 
 const SubUser = require("../models/SubUser");
 
+/**
+ * Create subUser
+ * @param req
+ * @param res
+ */
 export function addSubUser(req: any, res: any) {
+  // check for duplicated subuser with same sid and school
   SubUser.findOne({
     sid: req.body.sid,
     schoolid: req.body.schoolid,
