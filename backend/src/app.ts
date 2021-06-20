@@ -22,7 +22,6 @@ require("./models/Product");
 require("./models/Request");
 require("./models/School");
 require("./models/SubUser");
-require("./models/User");
 
 const usersRouter = require("./routes/user");
 app.use("/api/user/", usersRouter);

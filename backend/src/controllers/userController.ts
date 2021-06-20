@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import internal from "stream";
-import { error } from "console";
 dotenv.config({ path: __dirname + "/.env" });
-var User = mongoose.model("User");
+import User from "../models/User";
 
 export function addUser(req: any, res: any, next: any) {
   User.findOne({
@@ -118,6 +116,7 @@ export function loginUser(req: any, res: any, next: any) {
           req.body.tokenPayload = tokenPayload;
           const user = {
             _id: users[0]._id,
+            username: users[0].username,
           };
           req.body.user = user;
 
@@ -217,7 +216,7 @@ export function updatePassword(req: any, res: any) {
     }
     if (hash) {
       User.findByIdAndUpdate(req.body.userid, { password: hash })
-        .then((user) => {
+        .then(() => {
           return res.status(201).json({
             message: "password rested",
           });
@@ -228,5 +227,11 @@ export function updatePassword(req: any, res: any) {
           });
         });
     }
+  });
+}
+
+export function getSubuserData(req: any, res: any) {
+  User.findById(req.body.userid).then((user) => {
+    user?.subusers.map((subuser) => {});
   });
 }
