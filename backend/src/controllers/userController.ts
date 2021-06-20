@@ -98,8 +98,6 @@ export function loginUser(req: any, res: any, next: any) {
         message: "Incorrect credentials.",
       });
     } else {
-      //@ts-ignore
-      console.log(users[0].subusers);
       // check password
       bcrypt.compare(req.body.password, users[0].password, (err, result) => {
         // handle incorrect password
@@ -154,7 +152,7 @@ const SubUser = require("../models/SubUser");
  * @param req
  * @param res
  */
-export function addSubUser(req: any, res: any) {
+export function addSubUser(req: any, res: any, next: any) {
   // check for duplicated subuser with same sid and school
   SubUser.findOne({
     sid: req.body.sid,
@@ -173,22 +171,9 @@ export function addSubUser(req: any, res: any) {
         const result = await newSubUser.save();
         //res.status(201).json(result);
         // add subuser id to user
-        console.log(result._id);
-        User.findByIdAndUpdate(
-          req.body.userid,
-          { $push: { subsuers: result._id } },
-          { new: true, upsert: true }
-        )
-          .then((user) => {
-            //@ts-ignore
-            console.log(user.subusers);
-            return res.status(201).json(user);
-          })
-          .catch((error) => {
-            return res.status(401).json({
-              message: error,
-            });
-          });
+        req.body.subuser = result;
+        next();
+        return;
       } catch (err: any) {
         return res.status(401).json({
           message: err,
@@ -202,10 +187,30 @@ export function addSubUser(req: any, res: any) {
   });
 }
 
+export function updateSubuserList(req: any, res: any) {
+  User.findByIdAndUpdate(
+    req.body.userid,
+    {
+      $push: { subusers: req.body.subuser._id },
+    },
+    { new: true, upsert: true }
+  )
+    .then((user) => {
+      return res.status(201).json({
+        userid: req.body.userid,
+        subuser: req.body.subuser,
+      });
+    })
+    .catch((err) => {
+      return res.status(501).json({
+        message: err,
+      });
+    });
+}
+
 export function updatePassword(req: any, res: any) {
   bcrypt.hash(req.body.newpassword, 10, (err: any, hash: any) => {
     if (err) {
-      console.log("error");
       return res.status(501).json({
         message: err,
       });
