@@ -39,6 +39,10 @@ export function authenticateToken(
             req.body.tokenPayload = user;
             next();
             return;
+          } else {
+            return res.status(401).json({
+              message: "invalid token",
+            });
           }
         }
         console.log("error when authenticate");
@@ -51,6 +55,7 @@ export function authenticateToken(
 }
 
 export function generateToken(req: Request, res: Response, next: NextFunction) {
+  console.log("generating token");
   if (process?.env?.ACCESS_TOKEN_SECRET) {
     const token = jwt.sign(
       req.body.tokenPayload,

@@ -7,6 +7,12 @@ const subUserSchema = new mongoose.Schema({
   verify: { type: Boolean, required: true },
   name: { type: String, required: true },
   sid: { type: String, required: true },
+  activeuser: { type: Boolean, require: true },
 });
+
+subUserSchema.index(
+  { updatedAt: 1 },
+  { expireAfterSeconds: 259200, partialFilterExpression: { activeuser: false } }
+);
 
 module.exports = mongoose.model("SubUser", subUserSchema);

@@ -29,6 +29,7 @@ export function addUser(
             password: hash,
             tel: req?.body?.tel,
             email: req?.body?.email,
+            activeuser: true,
           });
 
           try {
@@ -77,6 +78,7 @@ export function addUser(
   });
 }
 
+//TODO: reactiveate user when login
 export function loginUser(
   req: express.Request,
   res: express.Response,
@@ -115,7 +117,6 @@ export function loginUser(
             userID: users[0]._id,
             username: users[0].username,
             subusers: users[0].subusers,
-            updatetime: users[0].updatedAt,
           };
           req.body.tokenPayload = tokenPayload;
           const user = {
@@ -174,6 +175,7 @@ export function addSubUser(
         verify: false,
         name: req.body.name,
         sid: req.body.sid,
+        activeuser: true,
       });
       try {
         const result = await newSubUser.save();
@@ -216,7 +218,11 @@ export function updateSubuserList(req: express.Request, res: express.Response) {
     });
 }
 
-export function updatePassword(req: express.Request, res: express.Response) {
+export function updatePassword(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
   bcrypt.hash(req.body.newpassword, 10, (err: any, hash: any) => {
     if (err) {
       return res.status(501).json({
@@ -225,10 +231,13 @@ export function updatePassword(req: express.Request, res: express.Response) {
     }
     if (hash) {
       User.findByIdAndUpdate(req.body.userid, { password: hash })
-        .then(() => {
-          return res.status(201).json({
-            message: "password reseted",
-          });
+        .then((user) => {
+          next();
+          // return res.status(201).json({
+          //   message: "password reseted",
+          //   token: req.body.user.token,
+          // });
+          return;
         })
         .catch((err) => {
           return res.status(501).json({
@@ -268,3 +277,32 @@ export function updateUserDetails(
   res: express.Response,
   next: express.NextFunction
 ) {}
+
+export function deleteUser(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  User.findByIdAndUpdate(req.body.userid, { activeuser: false })
+    .then((user) => {
+      user?.subusers.map((subuserid) => {
+        SubUser.findByIdAndUpdate(subuserid, { activeuser: false })
+          .then(() => {
+            res.status(201).json({
+              message:
+                "User account will be deactivated before deletion after 30 days. Login to reactiveate account.",
+            });
+          })
+          .catch((err: any) => {
+            res.status(500).json({
+              message: err,
+            });
+          });
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err,
+      });
+    });
+}

@@ -6,10 +6,15 @@ interface User {
   tel: String;
   email: String;
   subusers: [mongoose.Schema.Types.ObjectId];
+  active: Boolean;
 }
 
 const UserSchema = new mongoose.Schema<User>(
   {
+    activeuser: {
+      type: mongoose.Schema.Types.Boolean,
+      require: true,
+    },
     username: {
       type: String,
       required: [true, "can't be blank"],
@@ -27,6 +32,11 @@ const UserSchema = new mongoose.Schema<User>(
     subusers: [{ type: mongoose.Schema.Types.ObjectId, ref: "SubUser" }],
   },
   { timestamps: true }
+);
+
+UserSchema.index(
+  { updatedAt: 1 },
+  { expireAfterSeconds: 259200, partialFilterExpression: { activeuser: false } }
 );
 
 // UserSchema.methods.addSubUser = function (

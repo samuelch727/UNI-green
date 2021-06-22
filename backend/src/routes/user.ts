@@ -3,6 +3,7 @@ const router = express.Router();
 import {
   addSubUser,
   addUser,
+  deleteUser,
   getSubuserData,
   loginUser,
   sendUserData,
@@ -23,10 +24,13 @@ router.post(
   "/changepassword",
   authenticateToken,
   loginUser,
+  updatePassword,
   generateToken,
-  updatePassword
+  getSubuserData,
+  sendUserData
 );
 router.get("/getsubusers", authenticateToken, getSubuserData, sendUserData);
+router.put("/deleteuser", authenticateToken, loginUser, deleteUser);
 
 /*
 return json: 
