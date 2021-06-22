@@ -3,6 +3,7 @@ const router = express.Router();
 import {
   addSubUser,
   addUser,
+  getSubuserData,
   loginUser,
   sendUserData,
   updatePassword,
@@ -11,7 +12,7 @@ import {
 import { authenticateToken, generateToken } from "../middleware/authentication";
 
 router.post("/signup", addUser, generateToken, sendUserData);
-router.get("/login", loginUser, generateToken, sendUserData);
+router.get("/login", loginUser, generateToken, getSubuserData, sendUserData);
 router.post(
   "/create-sub-user",
   authenticateToken,
@@ -25,5 +26,16 @@ router.post(
   generateToken,
   updatePassword
 );
+router.get("/getsubusers", authenticateToken, getSubuserData, sendUserData);
+
+/*
+return json: 
+{
+  user: {
+    userid: id,
+    username: name,
+  }
+}
+*/
 
 module.exports = router;

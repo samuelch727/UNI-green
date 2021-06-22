@@ -119,7 +119,7 @@ export function loginUser(req: any, res: any, next: any) {
             username: users[0].username,
           };
           req.body.user = user;
-
+          req.body.userid = users[0]._id;
           next();
           return;
         }
@@ -139,6 +139,7 @@ export function loginUser(req: any, res: any, next: any) {
  * @returns
  */
 export function sendUserData(req: any, res: any) {
+  console.log(req.body.user);
   return res.status(200).json({
     user: req.body.user,
   });
@@ -218,7 +219,7 @@ export function updatePassword(req: any, res: any) {
       User.findByIdAndUpdate(req.body.userid, { password: hash })
         .then(() => {
           return res.status(201).json({
-            message: "password rested",
+            message: "password reseted",
           });
         })
         .catch((err) => {
@@ -230,8 +231,31 @@ export function updatePassword(req: any, res: any) {
   });
 }
 
-export function getSubuserData(req: any, res: any) {
-  User.findById(req.body.userid).then((user) => {
-    user?.subusers.map((subuser) => {});
-  });
+export function getSubuserData(req: any, res: any, next: any) {
+  req.body.user = {
+    ...req.body.user,
+    subusers: [],
+  };
+  User.findById(req.body.userid)
+    .then((user) => {
+      user?.subusers.map((subuserID) => {
+        SubUser.findById(subuserID)
+          .then((subuser: any) => {
+            req.body.user.subusers.push(subuser);
+            next();
+          })
+          .catch((err: any) => {
+            res.status(500).json({
+              message: err,
+            });
+          });
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err,
+      });
+    });
+
+  return;
 }
