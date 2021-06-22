@@ -3,8 +3,13 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import User from "../models/User";
+import express from "express";
 
-export function addUser(req: any, res: any, next: any) {
+export function addUser(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
   User.findOne({
     // check for duplication
     $or: [{ email: req.body.email }, { username: req.body.username }],
@@ -72,7 +77,11 @@ export function addUser(req: any, res: any, next: any) {
   });
 }
 
-export function loginUser(req: any, res: any, next: any) {
+export function loginUser(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
   User.aggregate([
     {
       $match: {
@@ -138,7 +147,7 @@ export function loginUser(req: any, res: any, next: any) {
  * @param res response
  * @returns
  */
-export function sendUserData(req: any, res: any) {
+export function sendUserData(req: express.Request, res: express.Response) {
   console.log(req.body.user);
   return res.status(200).json({
     user: req.body.user,
@@ -152,8 +161,12 @@ const SubUser = require("../models/SubUser");
  * @param req
  * @param res
  */
-export function addSubUser(req: any, res: any, next: any) {
-  // check for duplicated subuser with same sid and school
+// check for duplicated subuser with same sid and school
+export function addSubUser(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
   SubUser.findOne({
     sid: req.body.sid,
     schoolid: req.body.schoolid,
@@ -187,7 +200,7 @@ export function addSubUser(req: any, res: any, next: any) {
   });
 }
 
-export function updateSubuserList(req: any, res: any) {
+export function updateSubuserList(req: express.Request, res: express.Response) {
   User.findByIdAndUpdate(
     req.body.userid,
     {
@@ -208,7 +221,7 @@ export function updateSubuserList(req: any, res: any) {
     });
 }
 
-export function updatePassword(req: any, res: any) {
+export function updatePassword(req: express.Request, res: express.Response) {
   bcrypt.hash(req.body.newpassword, 10, (err: any, hash: any) => {
     if (err) {
       return res.status(501).json({
@@ -231,7 +244,11 @@ export function updatePassword(req: any, res: any) {
   });
 }
 
-export function getSubuserData(req: any, res: any, next: any) {
+export function getSubuserData(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
   req.body.user = {
     ...req.body.user,
     subusers: [],
@@ -245,17 +262,22 @@ export function getSubuserData(req: any, res: any, next: any) {
             next();
           })
           .catch((err: any) => {
-            res.status(500).json({
+            return res.status(500).json({
               message: err,
             });
           });
       });
     })
     .catch((err) => {
-      res.status(500).json({
+      return res.status(500).json({
         message: err,
       });
     });
-
   return;
 }
+
+export function updateUserDetails(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {}
