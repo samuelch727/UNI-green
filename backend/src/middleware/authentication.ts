@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { Request, Response, NextFunction } from "express";
 dotenv.config({ path: __dirname + "/.env" });
 
 /**
@@ -9,7 +10,11 @@ dotenv.config({ path: __dirname + "/.env" });
  * @param userid user id
  * @returns is token valid
  */
-export function authenticateToken(req: any, res: any, next: any) {
+export function authenticateToken(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
@@ -31,10 +36,12 @@ export function authenticateToken(req: any, res: any, next: any) {
         }
         if (user) {
           if (user.userID == req.body.userid) {
+            req.body.tokenPayload = user;
             next();
             return;
           }
         }
+        console.log("error when authenticate");
         return res.status(401).json({
           message: "Internal server error",
         });
@@ -43,7 +50,7 @@ export function authenticateToken(req: any, res: any, next: any) {
   }
 }
 
-export function generateToken(req: any, res: any, next: any) {
+export function generateToken(req: Request, res: Response, next: NextFunction) {
   if (process?.env?.ACCESS_TOKEN_SECRET) {
     const token = jwt.sign(
       req.body.tokenPayload,

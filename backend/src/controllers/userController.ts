@@ -89,15 +89,6 @@ export function loginUser(
         $or: [{ email: req.body.email }, { username: req.body.username }],
       },
     },
-    {
-      // retrive only _id, username, email, password from database
-      $project: {
-        _id: 1,
-        username: 1,
-        email: 1,
-        password: 1,
-      },
-    },
   ]).then((users: any) => {
     // handle no match found
     if (users.length < 1) {
@@ -117,10 +108,14 @@ export function loginUser(
 
         // handle correct password
         if (result) {
+          console.log(users[0]);
           const tokenPayload = {
+            tel: users[0].tel,
             email: users[0].email,
             userID: users[0]._id,
             username: users[0].username,
+            subusers: users[0].subusers,
+            updatetime: users[0].updatedAt,
           };
           req.body.tokenPayload = tokenPayload;
           const user = {
@@ -253,26 +248,18 @@ export function getSubuserData(
     ...req.body.user,
     subusers: [],
   };
-  User.findById(req.body.userid)
-    .then((user) => {
-      user?.subusers.map((subuserID) => {
-        SubUser.findById(subuserID)
-          .then((subuser: any) => {
-            req.body.user.subusers.push(subuser);
-            next();
-          })
-          .catch((err: any) => {
-            return res.status(500).json({
-              message: err,
-            });
-          });
+  req.body.tokenPayload.subusers.map((subuserID: any) => {
+    SubUser.findById(subuserID)
+      .then((subuser: any) => {
+        req.body.user.subusers.push(subuser);
+        next();
+      })
+      .catch((err: any) => {
+        return res.status(500).json({
+          message: err,
+        });
       });
-    })
-    .catch((err) => {
-      return res.status(500).json({
-        message: err,
-      });
-    });
+  });
   return;
 }
 
