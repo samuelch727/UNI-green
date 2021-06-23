@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import User from "../models/User";
 import express from "express";
+const SubUser = require("../models/SubUser");
 
 export function addUser(
   req: express.Request,
@@ -110,7 +111,23 @@ export function loginUser(
 
         // handle correct password
         if (result) {
-          console.log(users[0]);
+          if (!users[0].activeuser) {
+            User.findByIdAndUpdate(users[0].id, { activeuser: true })
+              .then(() => {
+                users[0].subusers.map((subuser: any) => {
+                  SubUser.findByIdAndUpdate(subuser.id, { activeuser: true });
+                });
+                req.body.user = {
+                  ...req.body.user,
+                  message: "Account has been reactivated.",
+                };
+              })
+              .catch((err) => {
+                res.status(500).json({
+                  message: err,
+                });
+              });
+          }
           const tokenPayload = {
             tel: users[0].tel,
             email: users[0].email,
@@ -120,6 +137,7 @@ export function loginUser(
           };
           req.body.tokenPayload = tokenPayload;
           const user = {
+            ...req.body.user,
             _id: users[0]._id,
             username: users[0].username,
           };
@@ -149,8 +167,6 @@ export function sendUserData(req: express.Request, res: express.Response) {
     user: req.body.user,
   });
 }
-
-const SubUser = require("../models/SubUser");
 
 /**
  * Create subUser

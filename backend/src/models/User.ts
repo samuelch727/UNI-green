@@ -6,7 +6,7 @@ interface User {
   tel: String;
   email: String;
   subusers: [mongoose.Schema.Types.ObjectId];
-  active: Boolean;
+  activeuser: Boolean;
 }
 
 const UserSchema = new mongoose.Schema<User>(
