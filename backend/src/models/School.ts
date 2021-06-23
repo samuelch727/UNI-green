@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+interface School {
+  name: String;
+  discription: String;
+  iconUrl: String;
+  address: String;
+  tel: String;
+}
+
 const SchoolSchema = new mongoose.Schema({
   name: { type: String, required: true },
   discription: { type: String, required: true },
@@ -8,4 +16,9 @@ const SchoolSchema = new mongoose.Schema({
   tel: { type: String, required: true },
 });
 
-module.exports = mongoose.model("School", SchoolSchema);
+SchoolSchema.index(
+  { updatedAt: 1 },
+  { expireAfterSeconds: 259200, partialFilterExpression: { activeuser: false } }
+);
+
+export default mongoose.model<School>("School", SchoolSchema);

@@ -1,8 +1,18 @@
 import mongoose from "mongoose";
 
+interface SubUser {
+  userid: mongoose.Schema.Types.ObjectId;
+  schoolid: mongoose.Schema.Types.ObjectId;
+  permissionLevel: Number;
+  verify: Boolean;
+  name: String;
+  sid: String;
+  activeuser: Boolean;
+}
+
 const subUserSchema = new mongoose.Schema({
-  userid: { type: mongoose.Types.ObjectId, required: true },
-  schoolid: { type: mongoose.Types.ObjectId, required: true },
+  userid: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
+  schoolid: { type: mongoose.Types.ObjectId, required: true, ref: "School" },
   permissionLevel: { type: Number, required: true },
   verify: { type: Boolean, required: true },
   name: { type: String, required: true },
@@ -15,4 +25,4 @@ subUserSchema.index(
   { expireAfterSeconds: 259200, partialFilterExpression: { activeuser: false } }
 );
 
-module.exports = mongoose.model("SubUser", subUserSchema);
+export default mongoose.model<SubUser>("SubUser", subUserSchema);
