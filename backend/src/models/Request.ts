@@ -18,9 +18,4 @@ const requestSchema = new mongoose.Schema({
   price: { type: mongoose.Types.Decimal128, required: true },
 });
 
-requestSchema.index(
-  { updatedAt: 1 },
-  { expireAfterSeconds: 259200, partialFilterExpression: { activeuser: false } }
-);
-
 export default mongoose.model<Request>("Request", requestSchema);

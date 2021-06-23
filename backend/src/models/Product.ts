@@ -20,15 +20,10 @@ const productSchema = new mongoose.Schema({
   },
   stock: { type: Number, required: true },
   available: { type: Boolean, required: true },
-  imgUrl: { type: [String], required: true },
+  imgUrl: [{ type: String, required: true }],
   size: { type: String, required: true },
   price: { type: mongoose.Types.Decimal128, required: true },
   type: { type: String, required: true },
 });
-
-productSchema.index(
-  { updatedAt: 1 },
-  { expireAfterSeconds: 259200, partialFilterExpression: { activeuser: false } }
-);
 
 export default mongoose.model<Product>("Product", productSchema);

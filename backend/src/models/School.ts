@@ -16,9 +16,4 @@ const SchoolSchema = new mongoose.Schema({
   tel: { type: String, required: true },
 });
 
-SchoolSchema.index(
-  { updatedAt: 1 },
-  { expireAfterSeconds: 259200, partialFilterExpression: { activeuser: false } }
-);
-
 export default mongoose.model<School>("School", SchoolSchema);

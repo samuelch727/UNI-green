@@ -19,9 +19,4 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-orderSchema.index(
-  { updatedAt: 1 },
-  { expireAfterSeconds: 259200, partialFilterExpression: { activeuser: false } }
-);
-
 export default mongoose.model<Order>("Order", orderSchema);

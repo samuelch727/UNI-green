@@ -12,9 +12,4 @@ const categorySchema = new mongoose.Schema({
   available: { type: String, required: true },
 });
 
-categorySchema.index(
-  { updatedAt: 1 },
-  { expireAfterSeconds: 259200, partialFilterExpression: { activeuser: false } }
-);
-
 export default mongoose.model<Category>("Category", categorySchema);
