@@ -82,7 +82,6 @@ export function addUser(
   });
 }
 
-//TODO: reactiveate user when login
 export function loginUser(
   req: express.Request,
   res: express.Response,
@@ -211,6 +210,7 @@ export function addSubUser(
     schoolid: req.body.schoolid,
   }).then(async (subUser: any) => {
     if (!subUser) {
+      // TODO: check for user permissionLevel. If permission level is 2 (school admin), allow for adding subuser ac with custom permission level (<= 2) and verify user.
       const newSubUser = new SubUser({
         userid: req.body.userid,
         schoolid: req.body.schoolid,
@@ -219,6 +219,7 @@ export function addSubUser(
         name: req.body.name,
         sid: req.body.sid,
         activeuser: true,
+        graddate: req.body.graddate,
       });
       try {
         const result = await newSubUser.save();
@@ -244,6 +245,29 @@ export function addSubUser(
       });
     }
   });
+}
+
+// future features
+export function addBatchSubUser(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  // check user have permission to perform action
+  req.body.user.subusers.find(
+    (result: any) => result.schoolid == req.body.addschoolid
+  );
+  Promise.all(
+    req.body.subusers.map((subuser: any) => {
+      return SubUser.findOne({
+        sid: subuser.sid,
+        schoolid: subuser.schoolid,
+      }).then((result) => {
+        if (!result) {
+        }
+      });
+    })
+  );
 }
 
 export function updateSubuserList(req: express.Request, res: express.Response) {
