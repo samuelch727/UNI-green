@@ -37,6 +37,7 @@ export function authenticateToken(
         if (user) {
           if (user.userID == req.body.userid) {
             req.body.tokenPayload = user;
+            console.log("authenticated user");
             next();
             return;
           } else {
@@ -68,6 +69,7 @@ export function generateToken(req: Request, res: Response, next: NextFunction) {
       ...req.body.user,
       token,
     };
+    console.log("token gnerated");
     next();
     return;
   } else {
