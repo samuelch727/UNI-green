@@ -25,6 +25,8 @@ require("./models/SubUser");
 
 const usersRouter = require("./routes/user");
 app.use("/api/user/", usersRouter);
+const schoolsRouter = require("./routes/school");
+app.use("/api/school/", schoolsRouter);
 
 app.listen(5000, () => {
   console.log("Server running");
