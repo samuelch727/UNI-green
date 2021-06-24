@@ -8,8 +8,18 @@ interface Product {
   imgUrl: [String];
   size: String;
   price: mongoose.Types.Decimal128;
-  type: String;
+  producttype: [ProductType];
 }
+
+interface ProductType {
+  type: String;
+  name: String;
+}
+
+const productTypeSchema = new mongoose.Schema({
+  type: { type: String },
+  name: { type: String },
+});
 
 const productSchema = new mongoose.Schema({
   schoolid: { type: mongoose.Types.ObjectId, required: true, ref: "School" },
@@ -23,7 +33,7 @@ const productSchema = new mongoose.Schema({
   imgUrl: [{ type: String, required: true }],
   size: { type: String, required: true },
   price: { type: mongoose.Types.Decimal128, required: true },
-  type: { type: String, required: true },
+  producttype: { type: productTypeSchema },
 });
 
 export default mongoose.model<Product>("Product", productSchema);
