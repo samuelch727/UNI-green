@@ -8,6 +8,7 @@ interface SubUser {
   name: String;
   sid: String;
   activeuser: Boolean;
+  graddate: Date;
 }
 
 const subUserSchema = new mongoose.Schema({
@@ -18,6 +19,7 @@ const subUserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   sid: { type: String, required: true },
   activeuser: { type: Boolean, require: true },
+  graddate: { type: Date },
 });
 
 subUserSchema.index(
