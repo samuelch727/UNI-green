@@ -1,10 +1,9 @@
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import User from "../models/User";
 import express from "express";
-const SubUser = require("../models/SubUser");
+import SubUser from "../models/SubUser";
 
 export function addUser(
   req: express.Request,
@@ -32,7 +31,11 @@ export function addUser(
             email: req?.body?.email,
             activeuser: true,
           });
-
+          if (newUser.validateSync()) {
+            return res.status(501).json({
+              message: "invalid input",
+            });
+          }
           try {
             // save new user to database "Users" collection
             const createdUser = await newUser.save();
@@ -111,19 +114,42 @@ export function loginUser(
 
         // handle correct password
         if (result) {
+          console.log("correct password");
           if (!users[0].activeuser) {
-            User.findByIdAndUpdate(users[0].id, { activeuser: true })
-              .then(() => {
-                users[0].subusers.map((subuser: any) => {
-                  SubUser.findByIdAndUpdate(subuser.id, { activeuser: true });
+            req.body.user = {
+              ...req.body.user,
+              message: "Account has been reactivated.",
+            };
+            console.log("reactivatiing user");
+            console.log(users[0]);
+            User.findByIdAndUpdate(users[0]._id, { activeuser: true })
+              .then((user) => {
+                console.log("activated user, reactivating subusers");
+                console.log(users[0]);
+                users[0].subusers.map((subuserid: any) => {
+                  SubUser.findByIdAndUpdate(subuserid, {
+                    activeuser: true,
+                  })
+                    .then((subuser: any) => {
+                      console.log("reactivating subuser: ");
+                      console.log(subuser);
+                    })
+                    .catch((err: any) => {
+                      // return res.status(500).json({
+                      //   message: err,
+                      // });
+                      console.log("fail to reactivate user");
+                      console.log(err);
+                      return;
+                    });
                 });
-                req.body.user = {
-                  ...req.body.user,
-                  message: "Account has been reactivated.",
-                };
+                // req.body.user = {
+                //   ...req.body.user,
+                //   message: "Account has been reactivated.",
+                // };
               })
               .catch((err) => {
-                res.status(500).json({
+                return res.status(500).json({
                   message: err,
                 });
               });
@@ -143,6 +169,7 @@ export function loginUser(
           };
           req.body.user = user;
           req.body.userid = users[0]._id;
+          console.log("login success");
           next();
           return;
         }
@@ -184,7 +211,7 @@ export function addSubUser(
     schoolid: req.body.schoolid,
   }).then(async (subUser: any) => {
     if (!subUser) {
-      const newSubUser = SubUser({
+      const newSubUser = new SubUser({
         userid: req.body.userid,
         schoolid: req.body.schoolid,
         permissionLevel: 0,
@@ -197,7 +224,13 @@ export function addSubUser(
         const result = await newSubUser.save();
         //res.status(201).json(result);
         // add subuser id to user
-        req.body.subuser = result;
+        const subuser = {
+          _id: result._id,
+          schoolid: result.schoolid,
+          name: result.name,
+          sid: result.sid,
+        };
+        req.body.subuser = subuser;
         next();
         return;
       } catch (err: any) {
@@ -273,17 +306,29 @@ export function getSubuserData(
     ...req.body.user,
     subusers: [],
   };
-  req.body.tokenPayload.subusers.map((subuserID: any) => {
-    SubUser.findById(subuserID)
-      .then((subuser: any) => {
-        req.body.user.subusers.push(subuser);
-        next();
-      })
-      .catch((err: any) => {
-        return res.status(500).json({
-          message: err,
+  console.log("getting subuser data");
+  console.log(req.body.tokenPayload.subusers);
+  Promise.all(
+    req.body.tokenPayload.subusers.map((subuserID: any) => {
+      return SubUser.findById(subuserID)
+        .then((result: any) => {
+          const subuser = {
+            _id: result._id,
+            schoolid: result.schoolid,
+            name: result.name,
+            sid: result.sid,
+          };
+          req.body.user.subusers.push(subuser);
+        })
+        .catch((err: any) => {
+          return res.status(500).json({
+            message: err,
+          });
         });
-      });
+    })
+  ).then(() => {
+    console.log("Finish adding subuser");
+    next();
   });
   return;
 }
@@ -299,25 +344,35 @@ export function deleteUser(
   res: express.Response,
   next: express.NextFunction
 ) {
+  console.log("start deleting");
   User.findByIdAndUpdate(req.body.userid, { activeuser: false })
+    .exec()
     .then((user) => {
-      user?.subusers.map((subuserid) => {
-        SubUser.findByIdAndUpdate(subuserid, { activeuser: false })
-          .then(() => {
-            res.status(201).json({
-              message:
-                "User account will be deactivated before deletion after 30 days. Login to reactiveate account.",
-            });
+      return Promise.all(
+        //@ts-ignore
+        user?.subusers.map((subuserid) => {
+          return SubUser.findByIdAndUpdate(subuserid, {
+            activeuser: false,
           })
-          .catch((err: any) => {
-            res.status(500).json({
-              message: err,
+            .exec()
+            .then(() => {
+              return;
+            })
+            .catch((err: any) => {
+              return res.status(500).json({
+                message: err,
+              });
             });
-          });
+        })
+      ).then(() => {
+        return res.status(201).json({
+          message:
+            "User account will be deactivated before deletion after 30 days. Login to reactiveate account.",
+        });
       });
     })
     .catch((err) => {
-      res.status(500).json({
+      return res.status(500).json({
         message: err,
       });
     });
