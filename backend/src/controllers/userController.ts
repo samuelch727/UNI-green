@@ -1,10 +1,9 @@
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import User from "../models/User";
 import express from "express";
-const SubUser = require("../models/SubUser");
+import SubUser from "../models/SubUser";
 
 export function addUser(
   req: express.Request,
@@ -212,7 +211,7 @@ export function addSubUser(
     schoolid: req.body.schoolid,
   }).then(async (subUser: any) => {
     if (!subUser) {
-      const newSubUser = SubUser({
+      const newSubUser = new SubUser({
         userid: req.body.userid,
         schoolid: req.body.schoolid,
         permissionLevel: 0,
@@ -306,9 +305,13 @@ export function getSubuserData(
   Promise.all(
     req.body.tokenPayload.subusers.map((subuserID: any) => {
       return SubUser.findById(subuserID)
-        .then((subuser: any) => {
-          console.log("subuser:");
-          console.log(subuser);
+        .then((result: any) => {
+          const subuser = {
+            _id: result._id,
+            schoolid: result.schoolid,
+            name: result.name,
+            sid: result.sid,
+          };
           req.body.user.subusers.push(subuser);
         })
         .catch((err: any) => {
