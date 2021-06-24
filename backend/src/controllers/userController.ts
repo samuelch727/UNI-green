@@ -224,7 +224,13 @@ export function addSubUser(
         const result = await newSubUser.save();
         //res.status(201).json(result);
         // add subuser id to user
-        req.body.subuser = result;
+        const subuser = {
+          _id: result._id,
+          schoolid: result.schoolid,
+          name: result.name,
+          sid: result.sid,
+        };
+        req.body.subuser = subuser;
         next();
         return;
       } catch (err: any) {
