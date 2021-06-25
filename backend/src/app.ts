@@ -16,15 +16,10 @@ mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 
-require("./models/Category");
-require("./models/Order");
-require("./models/Product");
-require("./models/Request");
-require("./models/School");
-require("./models/SubUser");
-
 const usersRouter = require("./routes/user");
+import productRouter from "./routes/product";
 app.use("/api/user/", usersRouter);
+app.use("/api/product/", productRouter);
 
 app.listen(5000, () => {
   console.log("Server running");

@@ -6,9 +6,9 @@ interface Product {
   stock: Number;
   available: Boolean;
   imgUrl: [String];
-  size: String;
   price: mongoose.Types.Decimal128;
-  producttype: [ProductType];
+  producttype: ProductType;
+  name: String;
 }
 
 interface ProductType {
@@ -30,10 +30,10 @@ const productSchema = new mongoose.Schema({
   },
   stock: { type: Number, required: true },
   available: { type: Boolean, required: true },
-  imgUrl: [{ type: String, required: true }],
-  size: { type: String, required: true },
+  imgUrl: [{ type: String }],
   price: { type: mongoose.Types.Decimal128, required: true },
   producttype: { type: productTypeSchema },
+  name: { type: String },
 });
 
 export default mongoose.model<Product>("Product", productSchema);
