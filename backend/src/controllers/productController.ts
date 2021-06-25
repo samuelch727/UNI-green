@@ -46,6 +46,11 @@ interface ProductType {
 }
 
 export function createProduct(req: Request, res: Response, next: NextFunction) {
+  if (!req.body.products) {
+    return res.status(201).json({
+      message: "Category created successfully",
+    });
+  }
   Category.findById(req.body.categoryid)
     .then((category) => {
       if (category) {
@@ -116,7 +121,7 @@ export function createCategory(
   res: Response,
   next: NextFunction
 ) {
-  if (req.body.newcategory == "true") {
+  if (req.body.newcategory) {
     Category.findOne({
       name: req.body.name,
       schoolid: req.body.schoolid,
