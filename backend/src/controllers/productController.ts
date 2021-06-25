@@ -1,34 +1,6 @@
-import express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import Product from "../models/Product";
 import Category from "../models/Category";
-
-// TODO: create product
-/*
-    request body for creating new product / category
-    {
-        "userid": userid,
-        "subuserid": subuserid,
-        "schoolid": mongoose.Types.ObjectId,
-        "newcategory": Boolean,
-        **OPTIONAL** "categoryid": mongoose.Types.ObjectId,
-        **OPTIONAL** "name": String, 
-        **OPTIONAL** "description": category description,
-        **OPTIONAL** "available": boolean,
-        **OPTIONAL** "producttype": [String],
-        **OPTIONAL** "availabletopublic": boolean,
-        **OPTIONAL** "availabletograd": boolean,
-        "products": [
-            "stock": Number,
-            "available": Boolean,
-            "imgUrl": [String],
-            "price": mongoose.Types.Decimal128,
-            "producttype": [{ 
-                "typename": typename,
-                "name": name
-            }];
-        ]
-    }
-*/
 
 interface Product {
   schoolid: String;
@@ -114,8 +86,6 @@ export function createProduct(req: Request, res: Response, next: NextFunction) {
     });
 }
 
-// TODO: create category
-
 export function createCategory(
   req: Request,
   res: Response,
@@ -153,3 +123,23 @@ export function createCategory(
     return;
   }
 }
+
+// TODO: get product list
+
+/*
+{
+    userid: user id,
+    schoolid: school id,
+    subuserid: subuser id,
+    
+}
+*/
+
+export function getProductList(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {}
+
+// TODO: update product
+// TODO: delete product
