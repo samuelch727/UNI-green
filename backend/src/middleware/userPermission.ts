@@ -12,19 +12,31 @@ export function checkUserAdmin(
       message: "Missing school ID, permission denied.",
     });
   }
-  req.body.tokenPayload.subusers.map((subuserid: String) => {
-    SubUser.findById(subuserid).then((subuser) => {
-      if (subuser?.schoolid == req.body.schoolid && subuser?.admin) {
-        console.log("User has admin permission");
-        next();
+  return Promise.all(
+    req.body.tokenPayload.subusers.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (subuser?.schoolid == req.body.schoolid && subuser?.admin) {
+          console.log("User has admin permission");
+          next();
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) {
         return;
       }
+      return res.status(401).json({
+        message: "Permission denied.",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json({
+        message: "Internal Server Error",
+      });
     });
-  });
-  console.log("User has no admin permission");
-  return res.status(401).json({
-    message: "Permission denied.",
-  });
 }
 
 export function checkUserSchoolAdmin(
@@ -38,19 +50,32 @@ export function checkUserSchoolAdmin(
       message: "Missing school ID, permission denied.",
     });
   }
-  req.body.tokenPayload.subusers.map((subuserid: String) => {
-    SubUser.findById(subuserid).then((subuser) => {
-      if (subuser?.schoolid == req.body.schoolid && subuser?.schooladmin) {
-        console.log("User has admin permission");
-        next();
+  return Promise.all(
+    req.body.tokenPayload.subusers.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (subuser?.schoolid == req.body.schoolid && subuser?.schooladmin) {
+          console.log("User has school admin permission");
+          next();
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) {
         return;
       }
+      console.log("User has no school admin permission");
+      return res.status(401).json({
+        message: "Permission denied.",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json({
+        message: "Internal Server Error",
+      });
     });
-  });
-  console.log("User has no admin permission");
-  return res.status(401).json({
-    message: "Permission denied.",
-  });
 }
 
 export function checkSchoolUser(
@@ -64,19 +89,32 @@ export function checkSchoolUser(
       message: "Missing school ID, permission denied.",
     });
   }
-  req.body.tokenPayload.subusers.map((subuserid: String) => {
-    SubUser.findById(subuserid).then((subuser) => {
-      if (subuser?.schoolid == req.body.schoolid && subuser?.schooluser) {
-        console.log("User has admin permission");
-        next();
+  return Promise.all(
+    req.body.tokenPayload.subusers.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (subuser?.schoolid == req.body.schoolid && subuser?.schooluser) {
+          console.log("User has school user permission");
+          next();
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) {
         return;
       }
+      console.log("User has no school user permission");
+      return res.status(401).json({
+        message: "Permission denied.",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json({
+        message: "Internal Server Error",
+      });
     });
-  });
-  console.log("User has no admin permission");
-  return res.status(401).json({
-    message: "Permission denied.",
-  });
 }
 
 export function checkUserAdminOrSchoolAdmin(
@@ -90,20 +128,32 @@ export function checkUserAdminOrSchoolAdmin(
       message: "Missing school ID, permission denied.",
     });
   }
-  req.body.tokenPayload.subusers.map((subuserid: String) => {
-    SubUser.findById(subuserid).then((subuser) => {
-      if (
-        subuser?.schoolid == req.body.schoolid &&
-        (subuser?.schooladmin || subuser?.admin)
-      ) {
-        console.log("User has admin permission");
-        next();
+  return Promise.all(
+    req.body.tokenPayload.subusers.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (
+          subuser?.schoolid == req.body.schoolid &&
+          (subuser?.admin || subuser?.schooladmin)
+        ) {
+          console.log("User has admin permission");
+          next();
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) {
         return;
       }
+      return res.status(401).json({
+        message: "Permission denied.",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json({
+        message: "Internal Server Error",
+      });
     });
-  });
-  console.log("User has no admin permission");
-  return res.status(401).json({
-    message: "Permission denied.",
-  });
 }
