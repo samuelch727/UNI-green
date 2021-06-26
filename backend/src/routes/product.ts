@@ -5,6 +5,10 @@ import {
   createCategory,
 } from "../controllers/productController";
 import { authenticateToken } from "../middleware/authentication";
+import {
+  checkUserAdmin,
+  checkUserSchoolAdmin,
+} from "../middleware/userPermission";
 
 /*
     request body for creating new product / category
