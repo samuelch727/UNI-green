@@ -8,6 +8,7 @@ import { authenticateToken } from "../middleware/authentication";
 import {
   checkUserAdmin,
   checkUserSchoolAdmin,
+  checkUserAdminOrSchoolAdmin,
 } from "../middleware/userPermission";
 
 /*
@@ -36,6 +37,12 @@ import {
         ]
     }
 */
-router.post("/createproduct", authenticateToken, createCategory, createProduct);
+router.post(
+  "/createproduct",
+  authenticateToken,
+  checkUserAdminOrSchoolAdmin,
+  createCategory,
+  createProduct
+);
 
 export default router;
