@@ -45,6 +45,7 @@ export function addUser(
               userID: createdUser._id,
               email: req?.body?.email,
               username: req?.body?.username,
+              subusers: [],
             };
             req.body.tokenPayload = tokenPayload;
 
@@ -82,7 +83,6 @@ export function addUser(
   });
 }
 
-//TODO: reactiveate user when login
 export function loginUser(
   req: express.Request,
   res: express.Response,
@@ -211,14 +211,32 @@ export function addSubUser(
     schoolid: req.body.schoolid,
   }).then(async (subUser: any) => {
     if (!subUser) {
+      // TODO: check for user permissionLevel. If permission level is 2 (school admin), allow for adding subuser ac with custom permission level (<= 2) and verify user.
+      var userData = await getUserData(req.body.userid);
+
+      const userAdmin = await checkUserAdmin(
+        req.body.schoolid,
+        //@ts-ignore
+        userData.subusers
+      );
+      const userSchoolAdmin = await checkUserSchoolAdmin(
+        req.body.schoolid,
+        //@ts-ignore
+        userData.subusers
+      );
       const newSubUser = new SubUser({
         userid: req.body.userid,
         schoolid: req.body.schoolid,
-        permissionLevel: 0,
-        verify: false,
+        verify: userSchoolAdmin || userAdmin ? req.body.verify ?? false : false,
         name: req.body.name,
         sid: req.body.sid,
         activeuser: true,
+        graddate: req.body.graddate,
+        admin: userAdmin ? req.body.admin ?? false : false,
+        schooladmin:
+          userSchoolAdmin || userAdmin ? req.body.schooladmin ?? false : false,
+        schooluser:
+          userSchoolAdmin || userAdmin ? req.body.schooluser ?? false : false,
       });
       try {
         const result = await newSubUser.save();
@@ -244,6 +262,29 @@ export function addSubUser(
       });
     }
   });
+}
+
+// future features
+export function addBatchSubUser(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  // check user have permission to perform action
+  req.body.user.subusers.find(
+    (result: any) => result.schoolid == req.body.addschoolid
+  );
+  Promise.all(
+    req.body.subusers.map((subuser: any) => {
+      return SubUser.findOne({
+        sid: subuser.sid,
+        schoolid: subuser.schoolid,
+      }).then((result) => {
+        if (!result) {
+        }
+      });
+    })
+  );
 }
 
 export function updateSubuserList(req: express.Request, res: express.Response) {
@@ -310,26 +351,27 @@ export function getSubuserData(
   console.log(req.body.tokenPayload.subusers);
   Promise.all(
     req.body.tokenPayload.subusers.map((subuserID: any) => {
-      return SubUser.findById(subuserID)
-        .then((result: any) => {
-          const subuser = {
-            _id: result._id,
-            schoolid: result.schoolid,
-            name: result.name,
-            sid: result.sid,
-          };
-          req.body.user.subusers.push(subuser);
-        })
-        .catch((err: any) => {
-          return res.status(500).json({
-            message: err,
-          });
-        });
+      return SubUser.findById(subuserID).then((result: any) => {
+        const subuser = {
+          _id: result._id,
+          schoolid: result.schoolid,
+          name: result.name,
+          sid: result.sid,
+        };
+        req.body.user.subusers.push(subuser);
+      });
     })
-  ).then(() => {
-    console.log("Finish adding subuser");
-    next();
-  });
+  )
+    .then(() => {
+      console.log("Finish adding subuser");
+      next();
+    })
+    .catch((err: any) => {
+      console.log("Error when loading subuser");
+      return res.status(500).json({
+        message: "Error when loading subuser",
+      });
+    });
   return;
 }
 
@@ -376,4 +418,104 @@ export function deleteUser(
         message: err,
       });
     });
+}
+
+export async function checkUserAdmin(
+  schoolid: string,
+  subusersid: Array<string>
+): Promise<Boolean> {
+  // await subusersid?.map(async (subuserid: String) => {
+  //   console.log("loop");
+  //   return await SubUser.findById(subuserid).then((subuser) => {
+  //     if (subuser?.schoolid.toString() == schoolid && subuser?.admin) {
+  //       console.log("User has admin permission");
+  //       return true;
+  //     }
+  //   });
+  // });
+  // console.log("User has no admin permission");
+  // return false;
+  return Promise.all(
+    subusersid?.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (subuser?.schoolid.toString() == schoolid && subuser?.admin) {
+          console.log("User has admin permission");
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) return true;
+      console.log("User has no admin permission");
+      return false;
+    })
+    .catch((err) => {
+      return false;
+    });
+}
+
+export async function checkUserSchoolAdmin(
+  schoolid: string,
+  subusersid: Array<string>
+): Promise<Boolean> {
+  return Promise.all(
+    subusersid?.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (subuser?.schoolid.toString() == schoolid && subuser?.schooladmin) {
+          console.log("User has school admin permission");
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) return true;
+      console.log("User has no school admin permission");
+      return false;
+    })
+    .catch((err) => {
+      return false;
+    });
+}
+
+export async function checkSchoolUser(
+  schoolid: string,
+  subusersid: Array<string>
+): Promise<Boolean> {
+  return Promise.all(
+    subusersid?.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (subuser?.schoolid.toString() == schoolid && subuser?.schooluser) {
+          console.log("User has school user permission");
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) return true;
+      console.log("User has no school user permission");
+      return false;
+    })
+    .catch((err) => {
+      return false;
+    });
+}
+
+export async function getUserData(userid: String) {
+  console.log("Loading user data");
+  var returnData = {};
+  await User.findById(userid)
+    .then((user) => {
+      console.log("Loaded user data");
+      returnData = user ?? {};
+      return user;
+    })
+    .catch((err) => {
+      console.log("Fail to load user data");
+      console.log(err);
+      return null;
+    });
+  return returnData;
 }
