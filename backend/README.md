@@ -3,7 +3,7 @@ API documentation for [UNI-green](https://github.com/samuelch727/UNI-green).
 <table>
   <tr>
     <td valign="top">
-    <li><a href="#cameras">Users</a></li>
+    <li><a href="#Users">Users</a></li>
         <ul>
           <li><a href="#signup">signup</a></li>
           <li><a href="#login">login</a></li>
