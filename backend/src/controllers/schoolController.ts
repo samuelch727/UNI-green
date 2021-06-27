@@ -16,7 +16,7 @@ export function addSchool(
     if (!school) {
       const newSchool = new School({
         name: req.body.name,
-        discription: req.body.discription,
+        description: req.body.description,
         iconUrl: req.body.iconUrl,
         address: req.body.address,
         tel: req.body.tel,
@@ -24,8 +24,7 @@ export function addSchool(
       try {
         const result = await newSchool.save();
         req.body.school = result;
-        next();
-        return;
+        return res.status(201).json(result);
       } catch (err: any) {
         return res.status(401).json({
           message: err,
@@ -39,10 +38,19 @@ export function addSchool(
   });
 }
 
+export function sendSchoolData(req: express.Request, res: express.Response) {
+  console.log(req.body.school);
+  return res.status(200).json({
+    user: req.body.school,
+  });
+}
+
 export function updateSchoolData(
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction
+  next: express.NextFunction,
+  assert: any,
+  done: () => void
 ) {
   School.findByIdAndUpdate(req.body.schoolid, {
     name: req.body.name,
@@ -52,9 +60,28 @@ export function updateSchoolData(
     tel: req.body.tel,
   })
     .then((school) => {
-      return res.status(201).json({
-        schoolid: req.body.schoolid,
-      });
+      console.log(school);
+      if (school) {
+        School.findOneAndUpdate({
+          name: req.body.name,
+          description: req.body.description,
+          iconUrl: req.body.iconUrl,
+          address: req.body.address,
+          tel: req.body.tel,
+        }).then(function () {
+          School.findOne({ _id: school._id }).then(function (result: any) {
+            assert(result.name === req.body.name);
+            done();
+          });
+        });
+        return res.status(201).json({
+          schoolid: req.body.schoolid,
+        });
+      } else {
+        return res.status(501).json({
+          message: "school not found",
+        });
+      }
     })
     .catch((err) => {
       return res.status(501).json({
@@ -68,8 +95,23 @@ export function delectSchool(
   res: express.Response,
   next: express.NextFunction
 ) {
-  School.findByIdAndUpdate(req.body.schoolid);
+  console.log("start deleting");
+  School.findByIdAndUpdate(req.body.schoolid)
+    .exec()
+    .then((school) => {
+      return res.status(201).json({
+        message:
+          "School account will be deactivated before deletion after 30 days. Login to reactivate account.",
+      });
+    })
+    .catch((err: any) => {
+      return res.status(500).json({
+        message: err,
+      });
+    });
 }
 
 // req.body.tokenPayload.subusers
 // [awiejgbaowej5553q2, adogubawoeigo32452]
+
+//For front end -- Require user's input: name, description, iconUrl, address, tel

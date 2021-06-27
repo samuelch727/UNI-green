@@ -27,6 +27,7 @@ const usersRouter = require("./routes/user");
 app.use("/api/user/", usersRouter);
 const schoolsRouter = require("./routes/school");
 app.use("/api/school/", schoolsRouter);
+//For front end -- Require user(school)'s input: name, description, iconUrl, address, tel
 
 app.listen(5000, () => {
   console.log("Server running");
