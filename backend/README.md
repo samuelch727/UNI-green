@@ -17,7 +17,8 @@ API documentation for [UNI-green](https://github.com/samuelch727/UNI-green).
 </table>
 
 # Users
-#### signup (Post)
+#### signup
+Post  
 Create new user. 
 ```
 /api/user/signup
