@@ -18,10 +18,9 @@ API documentation for [UNI-green](https://github.com/samuelch727/UNI-green).
 
 # Users
 #### signup
-Post  
 Create new user. 
 ```
-/api/user/signup
+POST: /api/user/signup
 ```
 request body example:
 ```json
