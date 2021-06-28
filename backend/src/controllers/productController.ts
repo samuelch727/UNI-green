@@ -139,7 +139,45 @@ export function getProductList(
   req: Request,
   res: Response,
   next: NextFunction
-) {}
+) {
+  var resArray: any[] = [];
+  Category.findById(req.body.categoryid)
+    .then((category) => {
+      if (category) {
+        Promise.all(
+          category.productid.map((productid) => {
+            return Product.findById(productid).then((product) => {
+              if (product && product.available) {
+                resArray.push(product);
+              }
+            });
+          })
+        )
+          .then(() => {
+            res.status(200).json({
+              category,
+              products: resArray,
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({
+              message: "Internal server error",
+            });
+          });
+      } else {
+        res.status(404).json({
+          message: "category not found",
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    });
+}
 
 // TODO: update product
 // TODO: delete product

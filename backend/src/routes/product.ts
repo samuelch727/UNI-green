@@ -3,6 +3,7 @@ const router = express.Router();
 import {
   createProduct,
   createCategory,
+  getProductList,
 } from "../controllers/productController";
 import { authenticateToken } from "../middleware/authentication";
 import {
@@ -38,11 +39,27 @@ import {
     }
 */
 router.post(
-  "/createproduct",
+  "/product",
   authenticateToken,
   checkUserAdminOrSchoolAdmin,
   createCategory,
   createProduct
 );
+
+/*
+    request body for getting product list
+    {
+      "userid": userid,
+      "categoryid": categoryid
+    }
+
+    return:
+    {
+      "category" : category object,
+      "products" : array of product objects
+    }
+*/
+
+router.get("/product", authenticateToken, getProductList);
 
 export default router;

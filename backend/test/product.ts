@@ -98,11 +98,14 @@ describe("Products", () => {
       };
       chai
         .request(server)
-        .post("/api/product/createproduct")
+        .post("/api/product/product")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
           res.should.have.status(201);
+          res.body.should.have
+            .property("message")
+            .eql("Successfully added all products");
           done();
         });
     });
