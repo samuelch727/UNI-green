@@ -10,6 +10,7 @@ interface Category {
   productid: [mongoose.Types.ObjectId];
   schoolid: mongoose.Types.ObjectId;
 }
+//TODO: add keyword for searching
 
 const categorySchema = new mongoose.Schema({
   name: { type: String, required: true },
