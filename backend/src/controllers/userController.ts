@@ -16,6 +16,11 @@ export function addUser(
   }).then((user: any) => {
     if (!user) {
       // password hashing
+      if (!req.body.password) {
+        return res.status(400).json({
+          message: "Invalid input",
+        });
+      }
       bcrypt.hash(req.body.password, 10, async (err: any, hash: any) => {
         // handle password hashing error
         if (err) {
@@ -32,8 +37,8 @@ export function addUser(
             activeuser: true,
           });
           if (newUser.validateSync()) {
-            return res.status(501).json({
-              message: "invalid input",
+            return res.status(400).json({
+              message: "Invalid input",
             });
           }
           try {
@@ -114,32 +119,22 @@ export function loginUser(
 
         // handle correct password
         if (result) {
-          console.log("correct password");
           if (!users[0].activeuser) {
             req.body.user = {
               ...req.body.user,
               message: "Account has been reactivated.",
             };
-            console.log("reactivatiing user");
-            console.log(users[0]);
             User.findByIdAndUpdate(users[0]._id, { activeuser: true })
               .then((user) => {
-                console.log("activated user, reactivating subusers");
-                console.log(users[0]);
                 users[0].subusers.map((subuserid: any) => {
                   SubUser.findByIdAndUpdate(subuserid, {
                     activeuser: true,
                   })
-                    .then((subuser: any) => {
-                      console.log("reactivating subuser: ");
-                      console.log(subuser);
-                    })
+                    .then((subuser: any) => {})
                     .catch((err: any) => {
                       // return res.status(500).json({
                       //   message: err,
                       // });
-                      console.log("fail to reactivate user");
-                      console.log(err);
                       return;
                     });
                 });
@@ -169,7 +164,6 @@ export function loginUser(
           };
           req.body.user = user;
           req.body.userid = users[0]._id;
-          console.log("login success");
           next();
           return;
         }
@@ -189,7 +183,6 @@ export function loginUser(
  * @returns
  */
 export function sendUserData(req: express.Request, res: express.Response) {
-  console.log(req.body.user);
   return res.status(200).json({
     user: req.body.user,
   });
@@ -211,7 +204,6 @@ export function addSubUser(
     schoolid: req.body.schoolid,
   }).then(async (subUser: any) => {
     if (!subUser) {
-      // TODO: check for user permissionLevel. If permission level is 2 (school admin), allow for adding subuser ac with custom permission level (<= 2) and verify user.
       var userData = await getUserData(req.body.userid);
 
       const userAdmin = await checkUserAdmin(
@@ -238,6 +230,13 @@ export function addSubUser(
         schooluser:
           userSchoolAdmin || userAdmin ? req.body.schooluser ?? false : false,
       });
+
+      if (newSubUser.validateSync()) {
+        return res.status(422).json({
+          message: "Invalid input",
+        });
+      }
+
       try {
         const result = await newSubUser.save();
         //res.status(201).json(result);
@@ -257,7 +256,7 @@ export function addSubUser(
         });
       }
     } else {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "User Already Created",
       });
     }
@@ -347,8 +346,6 @@ export function getSubuserData(
     ...req.body.user,
     subusers: [],
   };
-  console.log("getting subuser data");
-  console.log(req.body.tokenPayload.subusers);
   Promise.all(
     req.body.tokenPayload.subusers.map((subuserID: any) => {
       return SubUser.findById(subuserID).then((result: any) => {
@@ -363,11 +360,9 @@ export function getSubuserData(
     })
   )
     .then(() => {
-      console.log("Finish adding subuser");
       next();
     })
     .catch((err: any) => {
-      console.log("Error when loading subuser");
       return res.status(500).json({
         message: "Error when loading subuser",
       });
@@ -386,7 +381,6 @@ export function deleteUser(
   res: express.Response,
   next: express.NextFunction
 ) {
-  console.log("start deleting");
   User.findByIdAndUpdate(req.body.userid, { activeuser: false })
     .exec()
     .then((user) => {
@@ -425,21 +419,17 @@ export async function checkUserAdmin(
   subusersid: Array<string>
 ): Promise<Boolean> {
   // await subusersid?.map(async (subuserid: String) => {
-  //   console.log("loop");
   //   return await SubUser.findById(subuserid).then((subuser) => {
   //     if (subuser?.schoolid.toString() == schoolid && subuser?.admin) {
-  //       console.log("User has admin permission");
   //       return true;
   //     }
   //   });
   // });
-  // console.log("User has no admin permission");
   // return false;
   return Promise.all(
     subusersid?.map((subuserid: String) => {
       return SubUser.findById(subuserid).then((subuser) => {
         if (subuser?.schoolid.toString() == schoolid && subuser?.admin) {
-          console.log("User has admin permission");
           return true;
         }
       });
@@ -447,7 +437,6 @@ export async function checkUserAdmin(
   )
     .then((result) => {
       if (result.includes(true)) return true;
-      console.log("User has no admin permission");
       return false;
     })
     .catch((err) => {
@@ -463,7 +452,6 @@ export async function checkUserSchoolAdmin(
     subusersid?.map((subuserid: String) => {
       return SubUser.findById(subuserid).then((subuser) => {
         if (subuser?.schoolid.toString() == schoolid && subuser?.schooladmin) {
-          console.log("User has school admin permission");
           return true;
         }
       });
@@ -471,7 +459,6 @@ export async function checkUserSchoolAdmin(
   )
     .then((result) => {
       if (result.includes(true)) return true;
-      console.log("User has no school admin permission");
       return false;
     })
     .catch((err) => {
@@ -487,7 +474,6 @@ export async function checkSchoolUser(
     subusersid?.map((subuserid: String) => {
       return SubUser.findById(subuserid).then((subuser) => {
         if (subuser?.schoolid.toString() == schoolid && subuser?.schooluser) {
-          console.log("User has school user permission");
           return true;
         }
       });
@@ -495,7 +481,6 @@ export async function checkSchoolUser(
   )
     .then((result) => {
       if (result.includes(true)) return true;
-      console.log("User has no school user permission");
       return false;
     })
     .catch((err) => {
@@ -504,17 +489,13 @@ export async function checkSchoolUser(
 }
 
 export async function getUserData(userid: String) {
-  console.log("Loading user data");
   var returnData = {};
   await User.findById(userid)
     .then((user) => {
-      console.log("Loaded user data");
       returnData = user ?? {};
       return user;
     })
     .catch((err) => {
-      console.log("Fail to load user data");
-      console.log(err);
       return null;
     });
   return returnData;
