@@ -51,9 +51,7 @@ export function sendSchoolData(req: express.Request, res: express.Response) {
 export function updateSchoolData(
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction,
-  assert: any,
-  done: () => void
+  next: express.NextFunction
 ) {
   School.findByIdAndUpdate(req.body.schoolid, {
     name: req.body.name,
@@ -63,55 +61,67 @@ export function updateSchoolData(
     tel: req.body.tel,
   })
     .then((school) => {
-      console.log(school);
-      if (school) {
-        School.findOneAndUpdate({
-          name: req.body.name,
-          description: req.body.description,
-          iconUrl: req.body.iconUrl,
-          address: req.body.address,
-          tel: req.body.tel,
-        }).then(function () {
-          School.findOne({ _id: school._id }).then(function (result: any) {
-            assert(result.name === req.body.name);
-            done();
-          });
-        });
-        return res.status(201).json({
-          schoolid: req.body.schoolid,
-        });
-      } else {
-        return res.status(501).json({
-          message: "school not found",
-        });
-      }
+      return res.status(201).json({
+        name: req.body.name,
+        description: req.body.description,
+        iconUrl: req.body.iconUrl,
+        address: req.body.address,
+        tel: req.body.tel,
+      });
     })
+
+    /*
+      {
+        name
+
+      }
+      */
+
+    // console.log(school);
+    // if (school) {
+    //   School.findOneAndUpdate({
+    //     name: req.body.name,
+    //     description: req.body.description,
+    //     iconUrl: req.body.iconUrl,
+    //     address: req.body.address,
+    //     tel: req.body.tel,
+    //   }).then(function () {
+    //     School.findOne({ _id: school._id }).then(function (result: any) {
+    //       assert(result.name === req.body.name);
+    //     });
+    //   });
+    //   return res.status(201).json({
+    //     schoolid: req.body.schoolid,
+    //   });
+    // } else {
+    //   return res.status(501).json({
+    //     message: "school not found",
+    //   });
+    // }
     .catch((err) => {
       return res.status(501).json({
-        message: err,
+        message: "internal server error",
       });
     });
 }
 
-export function delectSchool(
+export function deleteSchool(
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
 ) {
   console.log("start deleting");
-  School.findByIdAndUpdate(req.body.schoolid)
-    .exec()
-    .then((school) => {
-      return res.status(201).json({
-        message:
-          "School account will be deactivated before deletion after 30 days. Login to reactivate account.",
-      });
-    })
-    .catch((err: any) => {
-      return res.status(500).json({
-        message: err,
-      });
+  School?.deleteOne({ school: req.body.schoolid }, function (err) {
+    if (err) return res.status(500).json({ message: err });
+    return res.status(201).json({
+      message: "School account is deleted.",
     });
+  });
+  // .catch((err: any) => {
+  //   return res.status(500).json({
+  //     message: err,
+  //   });
+  // });
 }
 
 // req.body.tokenPayload.subusers
