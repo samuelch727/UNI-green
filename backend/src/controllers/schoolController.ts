@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import School from "../models/School";
@@ -21,6 +19,11 @@ export function addSchool(
         address: req.body.address,
         tel: req.body.tel,
       });
+      if (newSchool.validateSync()) {
+        return res.status(400).json({
+          message: "Invalid input",
+        });
+      }
       try {
         const result = await newSchool.save();
         req.body.school = result;
