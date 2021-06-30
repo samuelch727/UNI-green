@@ -16,6 +16,11 @@ export function addUser(
   }).then((user: any) => {
     if (!user) {
       // password hashing
+      if (!req.body.password) {
+        return res.status(400).json({
+          message: "Invalid input",
+        });
+      }
       bcrypt.hash(req.body.password, 10, async (err: any, hash: any) => {
         // handle password hashing error
         if (err) {
@@ -32,8 +37,8 @@ export function addUser(
             activeuser: true,
           });
           if (newUser.validateSync()) {
-            return res.status(501).json({
-              message: "invalid input",
+            return res.status(400).json({
+              message: "Invalid input",
             });
           }
           try {
@@ -45,6 +50,7 @@ export function addUser(
               userID: createdUser._id,
               email: req?.body?.email,
               username: req?.body?.username,
+              subusers: [],
             };
             req.body.tokenPayload = tokenPayload;
 
@@ -82,7 +88,6 @@ export function addUser(
   });
 }
 
-//TODO: reactiveate user when login
 export function loginUser(
   req: express.Request,
   res: express.Response,
@@ -114,32 +119,22 @@ export function loginUser(
 
         // handle correct password
         if (result) {
-          console.log("correct password");
           if (!users[0].activeuser) {
             req.body.user = {
               ...req.body.user,
               message: "Account has been reactivated.",
             };
-            console.log("reactivatiing user");
-            console.log(users[0]);
             User.findByIdAndUpdate(users[0]._id, { activeuser: true })
               .then((user) => {
-                console.log("activated user, reactivating subusers");
-                console.log(users[0]);
                 users[0].subusers.map((subuserid: any) => {
                   SubUser.findByIdAndUpdate(subuserid, {
                     activeuser: true,
                   })
-                    .then((subuser: any) => {
-                      console.log("reactivating subuser: ");
-                      console.log(subuser);
-                    })
+                    .then((subuser: any) => {})
                     .catch((err: any) => {
                       // return res.status(500).json({
                       //   message: err,
                       // });
-                      console.log("fail to reactivate user");
-                      console.log(err);
                       return;
                     });
                 });
@@ -169,7 +164,6 @@ export function loginUser(
           };
           req.body.user = user;
           req.body.userid = users[0]._id;
-          console.log("login success");
           next();
           return;
         }
@@ -189,7 +183,6 @@ export function loginUser(
  * @returns
  */
 export function sendUserData(req: express.Request, res: express.Response) {
-  console.log(req.body.user);
   return res.status(200).json({
     user: req.body.user,
   });
@@ -211,15 +204,39 @@ export function addSubUser(
     schoolid: req.body.schoolid,
   }).then(async (subUser: any) => {
     if (!subUser) {
+      var userData = await getUserData(req.body.userid);
+
+      const userAdmin = await checkUserAdmin(
+        req.body.schoolid,
+        //@ts-ignore
+        userData.subusers
+      );
+      const userSchoolAdmin = await checkUserSchoolAdmin(
+        req.body.schoolid,
+        //@ts-ignore
+        userData.subusers
+      );
       const newSubUser = new SubUser({
         userid: req.body.userid,
         schoolid: req.body.schoolid,
-        permissionLevel: 0,
-        verify: false,
+        verify: userSchoolAdmin || userAdmin ? req.body.verify ?? false : false,
         name: req.body.name,
         sid: req.body.sid,
         activeuser: true,
+        graddate: req.body.graddate,
+        admin: userAdmin ? req.body.admin ?? false : false,
+        schooladmin:
+          userSchoolAdmin || userAdmin ? req.body.schooladmin ?? false : false,
+        schooluser:
+          userSchoolAdmin || userAdmin ? req.body.schooluser ?? false : false,
       });
+
+      if (newSubUser.validateSync()) {
+        return res.status(422).json({
+          message: "Invalid input",
+        });
+      }
+
       try {
         const result = await newSubUser.save();
         //res.status(201).json(result);
@@ -239,11 +256,34 @@ export function addSubUser(
         });
       }
     } else {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "User Already Created",
       });
     }
   });
+}
+
+// future features
+export function addBatchSubUser(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  // check user have permission to perform action
+  req.body.user.subusers.find(
+    (result: any) => result.schoolid == req.body.addschoolid
+  );
+  Promise.all(
+    req.body.subusers.map((subuser: any) => {
+      return SubUser.findOne({
+        sid: subuser.sid,
+        schoolid: subuser.schoolid,
+      }).then((result) => {
+        if (!result) {
+        }
+      });
+    })
+  );
 }
 
 export function updateSubuserList(req: express.Request, res: express.Response) {
@@ -306,30 +346,27 @@ export function getSubuserData(
     ...req.body.user,
     subusers: [],
   };
-  console.log("getting subuser data");
-  console.log(req.body.tokenPayload.subusers);
   Promise.all(
     req.body.tokenPayload.subusers.map((subuserID: any) => {
-      return SubUser.findById(subuserID)
-        .then((result: any) => {
-          const subuser = {
-            _id: result._id,
-            schoolid: result.schoolid,
-            name: result.name,
-            sid: result.sid,
-          };
-          req.body.user.subusers.push(subuser);
-        })
-        .catch((err: any) => {
-          return res.status(500).json({
-            message: err,
-          });
-        });
+      return SubUser.findById(subuserID).then((result: any) => {
+        const subuser = {
+          _id: result._id,
+          schoolid: result.schoolid,
+          name: result.name,
+          sid: result.sid,
+        };
+        req.body.user.subusers.push(subuser);
+      });
     })
-  ).then(() => {
-    console.log("Finish adding subuser");
-    next();
-  });
+  )
+    .then(() => {
+      next();
+    })
+    .catch((err: any) => {
+      return res.status(500).json({
+        message: "Error when loading subuser",
+      });
+    });
   return;
 }
 
@@ -344,7 +381,6 @@ export function deleteUser(
   res: express.Response,
   next: express.NextFunction
 ) {
-  console.log("start deleting");
   User.findByIdAndUpdate(req.body.userid, { activeuser: false })
     .exec()
     .then((user) => {
@@ -376,4 +412,91 @@ export function deleteUser(
         message: err,
       });
     });
+}
+
+export async function checkUserAdmin(
+  schoolid: string,
+  subusersid: Array<string>
+): Promise<Boolean> {
+  // await subusersid?.map(async (subuserid: String) => {
+  //   return await SubUser.findById(subuserid).then((subuser) => {
+  //     if (subuser?.schoolid.toString() == schoolid && subuser?.admin) {
+  //       return true;
+  //     }
+  //   });
+  // });
+  // return false;
+  return Promise.all(
+    subusersid?.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (subuser?.schoolid.toString() == schoolid && subuser?.admin) {
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) return true;
+      return false;
+    })
+    .catch((err) => {
+      return false;
+    });
+}
+
+export async function checkUserSchoolAdmin(
+  schoolid: string,
+  subusersid: Array<string>
+): Promise<Boolean> {
+  return Promise.all(
+    subusersid?.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (subuser?.schoolid.toString() == schoolid && subuser?.schooladmin) {
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) return true;
+      return false;
+    })
+    .catch((err) => {
+      return false;
+    });
+}
+
+export async function checkSchoolUser(
+  schoolid: string,
+  subusersid: Array<string>
+): Promise<Boolean> {
+  return Promise.all(
+    subusersid?.map((subuserid: String) => {
+      return SubUser.findById(subuserid).then((subuser) => {
+        if (subuser?.schoolid.toString() == schoolid && subuser?.schooluser) {
+          return true;
+        }
+      });
+    })
+  )
+    .then((result) => {
+      if (result.includes(true)) return true;
+      return false;
+    })
+    .catch((err) => {
+      return false;
+    });
+}
+
+export async function getUserData(userid: String) {
+  var returnData = {};
+  await User.findById(userid)
+    .then((user) => {
+      returnData = user ?? {};
+      return user;
+    })
+    .catch((err) => {
+      return null;
+    });
+  return returnData;
 }
