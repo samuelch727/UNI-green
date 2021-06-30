@@ -29,3 +29,5 @@ app.use("/api/user/", usersRouter);
 app.listen(5000, () => {
   console.log("Server running");
 });
+
+export default app;
