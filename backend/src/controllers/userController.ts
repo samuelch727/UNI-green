@@ -500,3 +500,23 @@ export async function getUserData(userid: String) {
     });
   return returnData;
 }
+
+export async function isSubuserGrad(subuserid: String) {
+  await SubUser.findById(subuserid)
+    .then((subuser) => {
+      if (subuser) {
+        let today = new Date();
+        if (subuser.graddate < today) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      return false;
+    });
+}
