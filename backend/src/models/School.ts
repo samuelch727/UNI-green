@@ -6,6 +6,7 @@ interface School {
   iconUrl: String;
   address: String;
   tel: String;
+  categoryid: [mongoose.Types.ObjectId];
 }
 
 const SchoolSchema = new mongoose.Schema({
@@ -14,6 +15,7 @@ const SchoolSchema = new mongoose.Schema({
   iconUrl: { type: String },
   address: { type: String, required: true },
   tel: { type: String, required: true },
+  categoryid: [{ type: mongoose.Types.ObjectId }],
 });
 
 export default mongoose.model<School>("School", SchoolSchema);

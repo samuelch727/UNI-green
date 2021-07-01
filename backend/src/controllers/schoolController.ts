@@ -29,6 +29,8 @@ export function addSchool(
         req.body.school = result;
         return res.status(201).json(result);
       } catch (err: any) {
+        console.log("error when creating school");
+        console.log(err);
         return res.status(401).json({
           message: err,
         });
@@ -128,3 +130,20 @@ export function deleteSchool(
 // [awiejgbaowej5553q2, adogubawoeigo32452]
 
 //For front end -- Require user's input: name, description, iconUrl, address, tel
+
+export function addProduct(schoolid: any, categoryid: any) {
+  School.findByIdAndUpdate(
+    schoolid,
+    {
+      $push: { category: categoryid },
+    },
+    { new: true, upsert: true }
+  )
+    .then((school) => {
+      return true;
+    })
+    .catch((err) => {
+      console.log(err);
+      return false;
+    });
+}

@@ -7,13 +7,28 @@ import {
   deleteSchool,
 } from "../controllers/schoolController";
 import { authenticateToken, generateToken } from "../middleware/authentication";
-import { checkUserAdmin } from "../middleware/userPermission";
+import {
+  checkUserAdmin,
+  checkUserAdminOrSchoolAdmin,
+} from "../middleware/userPermission";
 
 // router.post("/signup", authenticateToken, addSchool, sendSchoolData);
-router.post("/signup", checkUserAdmin, addSchool, sendSchoolData);
+router.post(
+  "/signup",
+  authenticateToken,
+  checkUserAdmin,
+  addSchool,
+  sendSchoolData
+);
 // router.put("/update-school-info", authenticateToken, updateSchoolData, sendSchoolData);
-router.put("/update-school-info", updateSchoolData, sendSchoolData);
-router.put("/delect-school", deleteSchool);
+router.put(
+  "/update-school-info",
+  authenticateToken,
+  checkUserAdminOrSchoolAdmin,
+  updateSchoolData,
+  sendSchoolData
+);
+router.put("/delect-school", authenticateToken, checkUserAdmin, deleteSchool);
 
 module.exports = router;
 
