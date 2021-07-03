@@ -28,7 +28,7 @@ POST: /api/user/signup
 
 request body example:
 
-```json
+```javascript
 {
   "username": "alex",
   "password": "alexpassword",
@@ -39,7 +39,7 @@ request body example:
 
 return body example:
 
-```json
+```javascript
 {
   "user": {
     "_id": "60d5f077a10a7012d1c0d240",
@@ -58,7 +58,7 @@ POST: /api/user/login
 
 request body example:
 
-```json
+```javascript
 {
   "username": "alex", // Optional
   "password": "alexpassword",
@@ -68,7 +68,7 @@ request body example:
 
 return body example:
 
-```json
+```javascript
 {
   "user": {
     "_id": "60d5f077a10a7012d1c0d240",
@@ -97,7 +97,7 @@ POST: /api/user/createsubuser
 Token is needed for this request.  
 request body example:
 
-```json
+```javascript
 {
   "userid": "60e05b217c789d4600ebc806",
   "schoolid": "60cb22c1e1376625c3b6e203",
@@ -113,7 +113,7 @@ request body example:
 
 return body example:
 
-```json
+```javascript
 {
   "userid": "60e05b217c789d4600ebc806",
   "subuser": {
