@@ -131,7 +131,7 @@ export function createCategory(
     userid: user id,
     schoolid: school id,
     subuserid: subuser id,
-    
+    categoryid: category id,
 }
 */
 
@@ -177,6 +177,28 @@ export function getProductList(
         message: "Internal server error",
       });
     });
+}
+
+import { getSubuserDataById } from "./userController";
+
+// TODO: get category list
+/*
+{
+    userid: user id,
+    **OPTIONAL** schoolid: school id,
+    **OPTIONAL** subuserid: subuser id,
+}
+*/
+
+export async function getCategoryList(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (req.body.schoolid && req.body.subuserid) {
+    let subuser = await getSubuserDataById(req.body.subuserid);
+    
+  }
 }
 
 // TODO: update product
