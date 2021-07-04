@@ -26,7 +26,7 @@ Create new user.
 POST: /api/user/signup
 ```
 
-request body example:
+**request body example:**
 
 ```javascript
 {
@@ -37,7 +37,7 @@ request body example:
 }
 ```
 
-return body example:
+**return body example:**
 
 ```javascript
 {
@@ -45,6 +45,16 @@ return body example:
     "_id": "60d5f077a10a7012d1c0d240",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MGQ1ZjA3N2ExMGE3MDEyZDFjMGQyNDAiLCJlbWFpbCI6InNhbXVlbEBlbWFpbC5jb20iLCJ1c2VybmFtZSI6InNhbXVlbGNoIiwiaWF0IjoxNjI0NjMzNDYzLCJleHAiOjE2MjQ2MzUyNjN9.FXDVgHWzAV4mole9EPYFwgDgUeJC4bkdOYAHN2rlNi0"
   }
+}
+```
+
+**Error handling**  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "User exist. Fail to create account"
 }
 ```
 
