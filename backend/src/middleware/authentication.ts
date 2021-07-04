@@ -58,6 +58,7 @@ export function authenticateToken(
 export function generateToken(req: Request, res: Response, next: NextFunction) {
   console.log("generating token");
   if (process?.env?.ACCESS_TOKEN_SECRET) {
+    if (req.body.tokenPayload.exp) delete req.body.tokenPayload.exp;
     const token = jwt.sign(
       req.body.tokenPayload,
       process.env.ACCESS_TOKEN_SECRET,
