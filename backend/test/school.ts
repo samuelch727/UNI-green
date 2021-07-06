@@ -86,10 +86,11 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(201);
           res.body.should.have
             .property("message")
-            .eql("Successfully added school");
+            .eql("School Already Created");
           done();
         });
     });
@@ -99,7 +100,7 @@ describe("School testing", () => {
         description: "run la",
         iconUrl: "njnjnnndjfjjfjf",
         address: "Loscyr PArk",
-        tel: "92876543",
+        tel: "2345678",
         userid,
         subuserid,
         schoolid: "60cb22c1e1376625c3b6e203",
@@ -110,6 +111,7 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -118,7 +120,7 @@ describe("School testing", () => {
 
     it("Test create school with missing description", (done) => {
       let request = {
-        name: "CUHK",
+        name: "FKU",
         iconUrl: "njnjnnndjfjjfjf",
         address: "Loscyr PArk",
         tel: "92876543",
@@ -132,6 +134,7 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -140,7 +143,7 @@ describe("School testing", () => {
 
     it("Test create school with missing address.", (done) => {
       let request = {
-        name: "CUHK",
+        name: "FKU",
         description: "run la",
         iconUrl: "njnjnnndjfjjfjf",
         tel: "92876543",
@@ -154,6 +157,7 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -162,7 +166,7 @@ describe("School testing", () => {
 
     it("Test create school with missing tel", (done) => {
       let request = {
-        name: "CUHK",
+        name: "FKU",
         description: "run la",
         iconUrl: "njnjnnndjfjjfjf",
         address: "Loscyr PArk",
@@ -176,6 +180,7 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -186,7 +191,7 @@ describe("School testing", () => {
   describe("/PUT update school", () => {
     it("Test update school's information", (done) => {
       let request = {
-        name: "CUHK",
+        name: "FKU",
         description: "run la",
         iconUrl: "kjhgf",
         address: "Loscyr PArk",
@@ -201,18 +206,17 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.have
-            .property("message")
-            .eql("Successfully updated school's information");
+          console.log(res.body);
+          res.should.have.status(201);
+          res.body.should.have.property("message").eql("School updated");
           done();
         });
     });
     it("Test update school's information with missing name.", (done) => {
       let request = {
         description: "run la",
-        iconUrl: "09876lkjhgfcvb",
-        address: "Loscyr PArk",
+        iconUrl: "dk3456789kjhbvcdrt6",
+        address: "Lohas Park",
         tel: "92876543",
         userid,
         subuserid,
@@ -224,6 +228,7 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -232,10 +237,10 @@ describe("School testing", () => {
 
     it("Test update school's information with missing description", (done) => {
       let request = {
-        name: "CUHK",
+        name: "FKU",
         iconUrl: "njnjnnndjfjjfjf",
         address: "Loscyr PArk",
-        tel: "45678976",
+        tel: "987654987",
         userid,
         subuserid,
         schoolid: "60cb22c1e1376625c3b6e203",
@@ -246,6 +251,7 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -254,10 +260,10 @@ describe("School testing", () => {
 
     it("Test update school's information with missing address.", (done) => {
       let request = {
-        name: "CUHK",
+        name: "FKU",
         description: "run la",
         iconUrl: "fdtdkfhgljhih67866",
-        tel: "92876543",
+        tel: "9876545678",
         userid,
         subuserid,
         schoolid: "60cb22c1e1376625c3b6e203",
@@ -268,6 +274,7 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -276,7 +283,7 @@ describe("School testing", () => {
 
     it("Test update school's information with missing tel", (done) => {
       let request = {
-        name: "CUHK",
+        name: "FKU",
         description: "run la",
         iconUrl: "65vib65g54fcug",
         address: "Loscyr PArk",
@@ -290,6 +297,7 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -315,10 +323,11 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
-          res.should.have.status(200);
+          console.log(res.body);
+          res.should.have.status(201);
           res.body.should.have
             .property("message")
-            .eql("Successfully deleted school");
+            .eql("School account is deleted.");
           done();
         });
     });
@@ -339,10 +348,9 @@ describe("School testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.have
-            .property("message")
-            .eql("School account is not EXIST. Fail to delete account.");
+          console.log(res.body);
+          res.should.have.status(401);
+          res.body.should.have.property("message").eql("Permission denied.");
           done();
         });
     });

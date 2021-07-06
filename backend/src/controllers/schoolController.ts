@@ -27,7 +27,10 @@ export function addSchool(
       try {
         const result = await newSchool.save();
         req.body.school = result;
-        return res.status(201).json(result);
+        return res.status(201).json({
+          ...result,
+          message: "School Already Created",
+        });
       } catch (err: any) {
         console.log("error when creating school");
         console.log(err);
@@ -69,6 +72,7 @@ export function updateSchoolData(
         iconUrl: req.body.iconUrl,
         address: req.body.address,
         tel: req.body.tel,
+        message: "School updated",
       });
     })
 
