@@ -179,14 +179,14 @@ export function getProductList(
     });
 }
 
-import { getSubuserDataById } from "./userController";
+import { getSubuserDataById, getUserData } from "./userController";
+import { authenticateToken } from "../middleware/authentication";
 
 // TODO: get category list
 /*
 {
-    userid: user id,
+    **OPTIONAL** userid: user id,
     **OPTIONAL** schoolid: school id,
-    **OPTIONAL** subuserid: subuser id,
 }
 */
 
@@ -195,10 +195,31 @@ export async function getCategoryList(
   res: Response,
   next: NextFunction
 ) {
-  if (req.body.schoolid && req.body.subuserid) {
-    let subuser = await getSubuserDataById(req.body.subuserid);
-    
+  var query: any = {};
+  console.log(req.body);
+  if (req.body.userid) {
+    let schoolidArr: any[] = [];
+    await authenticateToken(req, res, () => {});
+    await Promise.all(
+      req.body.tokenPayload.subusers.map(async (subuserid: any) => {
+        var subuser: any = await getSubuserDataById(subuserid);
+        console.log(subuser);
+        return schoolidArr.push(subuser?.schoolid);
+      })
+    ).then(() => {
+      console.log("School id:");
+      console.log(schoolidArr);
+      query["schoolid"] = { $in: schoolidArr };
+    });
   }
+  if (req.body.schoolid) {
+    query["schoolid"] = req.body.schoolid;
+  }
+  Category.find(query).then((result) => {
+    console.log("query");
+    console.log(query);
+    res.status(200).json(result);
+  });
 }
 
 // TODO: update product

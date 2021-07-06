@@ -18,7 +18,7 @@ chai.use(chaiHttp);
 
 describe("Products", () => {
   var token: String, userid: String, subuserid: String;
-  beforeEach((done) => {
+  before((done) => {
     Product.remove({}, (err) => {
       Category.remove({}, (err) => {
         User.remove({}, (err) => {
@@ -70,7 +70,7 @@ describe("Products", () => {
   });
 
   describe("/POST products and categories", () => {
-    it("should create a new category with new products created", (done) => {
+    it("Test creating new category and adding one product.", (done) => {
       let request = {
         userid: userid,
         subuserid: subuserid,
@@ -106,6 +106,34 @@ describe("Products", () => {
           res.body.should.have
             .property("message")
             .eql("Successfully added all products");
+          done();
+        });
+    });
+
+    it("Test creating already exist category", (done) => {
+      let request = {
+        userid: userid,
+        subuserid: subuserid,
+        schoolid: "60cb22c1e1376625c3b6e203",
+        newcategory: true,
+        name: "test new category",
+        description: "test new category description",
+        available: true,
+        producttype: ["size"],
+        availabletopublic: true,
+        availabletograd: false,
+        products: [],
+      };
+      chai
+        .request(server)
+        .post("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.have
+            .property("message")
+            .eql("Category with same name already exist.");
           done();
         });
     });

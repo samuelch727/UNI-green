@@ -10,7 +10,7 @@ dotenv.config({ path: __dirname + "/.env" });
  * @param userid user id
  * @returns is token valid
  */
-export function authenticateToken(
+export async function authenticateToken(
   req: Request,
   res: Response,
   next: NextFunction

@@ -4,6 +4,7 @@ import {
   createProduct,
   createCategory,
   getProductList,
+  getCategoryList,
 } from "../controllers/productController";
 import { authenticateToken } from "../middleware/authentication";
 import {
@@ -61,5 +62,6 @@ router.post(
 */
 
 router.get("/product", authenticateToken, getProductList);
+router.get("/getcategory", getCategoryList);
 
 export default router;

@@ -502,14 +502,18 @@ export async function getUserData(userid: String) {
 }
 
 export async function getSubuserDataById(userid: String) {
+  var obj: any;
   await SubUser.findById(userid)
     .then((subuser) => {
-      return subuser;
+      console.log("subuser find");
+      console.log(subuser);
+      obj = subuser;
     })
     .catch((err) => {
       console.log(err);
       return null;
     });
+  return obj;
 }
 
 export async function isSubuserGrad(subuserid: String) {
