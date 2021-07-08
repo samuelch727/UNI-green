@@ -108,7 +108,7 @@ return body example:
 Update school information.
 
 ```
-POST: /api/school/update-school-info
+PUT: /api/school/update-school-info
 ```
 
 Token is needed for this request.
@@ -144,7 +144,7 @@ return body example:
 Delete the existing school.
 
 ```
-POST: /api/school/delect-school
+PUT: /api/school/delect-school
 ```
 
 Token is needed for this request.
