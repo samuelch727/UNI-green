@@ -28,7 +28,7 @@ router.put(
   updateSchoolData,
   sendSchoolData
 );
-router.put("/delect-school", authenticateToken, checkUserAdmin, deleteSchool);
+router.put("/delete-school", authenticateToken, checkUserAdmin, deleteSchool);
 
 module.exports = router;
 

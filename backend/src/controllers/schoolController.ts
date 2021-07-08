@@ -27,9 +27,10 @@ export function addSchool(
       try {
         const result = await newSchool.save();
         req.body.school = result;
+        console.log(result);
         return res.status(201).json({
-          ...result,
-          message: "School Already Created",
+          result,
+          message: "School Created",
         });
       } catch (err: any) {
         console.log("error when creating school");
