@@ -105,12 +105,17 @@ export function createCategory(
           availabletopublic: req.body.availabletopublic,
           availabletograd: req.body.availabletograd,
           schoolid: req.body.schoolid,
-        }).then((category) => {
-          req.body.categoryid = category._id;
-          console.log("Created new category");
-          next();
-          return;
-        });
+        })
+          .then((category) => {
+            req.body.categoryid = category._id;
+            console.log("Created new category");
+            next();
+            return;
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(401).json({ message: "invalid input" });
+          });
       } else {
         console.log("Category with same name already created");
         return res.status(401).json({
@@ -179,14 +184,19 @@ export function getProductList(
     });
 }
 
-import { getSubuserDataById, getUserData } from "./userController";
+import {
+  getSubuserDataById,
+  getUserData,
+  isSubuserGrad,
+} from "./userController";
 import { authenticateToken } from "../middleware/authentication";
 
-// TODO: get category list
+// get category list
 /*
 {
     **OPTIONAL** userid: user id,
     **OPTIONAL** schoolid: school id,
+    TODO: add search by name
 }
 */
 
@@ -196,25 +206,68 @@ export async function getCategoryList(
   next: NextFunction
 ) {
   var query: any = {};
+  let schoolidArr: any[] = [];
+  let solveGivenSchool = false;
   console.log(req.body);
+
+  // load subuser schoolid
   if (req.body.userid) {
-    let schoolidArr: any[] = [];
+    query = {
+      $or: [],
+    };
     await authenticateToken(req, res, () => {});
-    await Promise.all(
-      req.body.tokenPayload.subusers.map(async (subuserid: any) => {
-        var subuser: any = await getSubuserDataById(subuserid);
-        console.log(subuser);
-        return schoolidArr.push(subuser?.schoolid);
-      })
-    ).then(() => {
-      console.log("School id:");
-      console.log(schoolidArr);
-      query["schoolid"] = { $in: schoolidArr };
-    });
+    if (!req.body.tokenPayload) return;
+    let today = new Date();
+    for (let i = 0; i < req.body.tokenPayload.subusers.length; i++) {
+      var subuser: any = await getSubuserDataById(
+        req.body.tokenPayload.subusers[i]
+      );
+      let isGrad = subuser?.graddate < today;
+      if (req.body.schoolid && req.body.schoolid == subuser?.schoolid) {
+        console.log("Given School ID, and match subuser");
+        solveGivenSchool = true;
+        query = {
+          schoolid: subuser.schoolid,
+          available: true,
+        };
+        if (isGrad) {
+          console.log("Graded");
+          query["availabletograd"] = true;
+        }
+        break;
+      }
+      if (subuser.admin && !req.body.schoolid) {
+        query = {};
+        break;
+      }
+
+      if (isGrad && !subuser.schooladmin) {
+        query.$or.push({
+          schoolid: subuser.schoolid,
+          availabletograd: true,
+          available: true,
+        });
+      } else {
+        query.$or.push({
+          schoolid: subuser.schoolid,
+          available: true,
+        });
+      }
+    }
+    console.log("School id:");
+    console.log(schoolidArr);
   }
-  if (req.body.schoolid) {
-    query["schoolid"] = req.body.schoolid;
+  if (req.body.schoolid && !solveGivenSchool) {
+    console.log("Given school, no matching subuser");
+    query = {
+      schoolid: req.body.schoolid,
+      availabletopublic: true,
+      available: true,
+    };
   }
+
+  if (!req.body.schoolid && !req.body.userid) query["availabletopublic"] = true;
+
   Category.find(query).then((result) => {
     console.log("query");
     console.log(query);

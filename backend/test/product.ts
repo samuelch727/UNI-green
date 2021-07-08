@@ -137,5 +137,57 @@ describe("Products", () => {
           done();
         });
     });
+
+    it("Test creating category with invalid input (missing schoolid)", (done) => {
+      let request = {
+        userid: userid,
+        subuserid: subuserid,
+        newcategory: true,
+        name: "test new category",
+        description: "test new category description",
+        available: true,
+        producttype: ["size"],
+        availabletopublic: true,
+        availabletograd: false,
+        products: [],
+      };
+      chai
+        .request(server)
+        .post("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.have
+            .property("message")
+            .eql("Missing school ID, permission denied.");
+          done();
+        });
+    });
+
+    it("Test creating category with invalid input (missing category name)", (done) => {
+      let request = {
+        userid: userid,
+        subuserid: subuserid,
+        schoolid: "60cb22c1e1376625c3b6e203",
+        newcategory: true,
+        description: "test new category description",
+        available: true,
+        producttype: ["size"],
+        availabletopublic: true,
+        availabletograd: false,
+        products: [],
+      };
+      chai
+        .request(server)
+        .post("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.have.property("message").eql("invalid input");
+          done();
+        });
+    });
   });
 });

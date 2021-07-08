@@ -15,14 +15,19 @@ interface Category {
 const categorySchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  available: { type: Boolean, required: true },
-  availabletopublic: { type: Boolean, required: true },
-  availabletograd: { type: Boolean, required: true },
+  available: { type: Boolean, required: true, index: true },
+  availabletopublic: { type: Boolean, required: true, index: true },
+  availabletograd: { type: Boolean, required: true, index: true },
   producttype: [{ type: String }],
   productid: [
     { type: mongoose.Types.ObjectId, required: true, ref: "Product" },
   ],
-  schoolid: { type: mongoose.Types.ObjectId, required: true, ref: "School" },
+  schoolid: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+    ref: "School",
+    index: true,
+  },
 });
 
 export default mongoose.model<Category>("Category", categorySchema);
