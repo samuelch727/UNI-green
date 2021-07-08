@@ -50,7 +50,7 @@ router.post(
 /*
     request body for getting product list
     {
-      "userid": userid,
+      **OPTIONAL** "userid": userid,
       "categoryid": categoryid
     }
 
@@ -61,7 +61,7 @@ router.post(
     }
 */
 
-router.get("/product", authenticateToken, getProductList);
+router.get("/product", getProductList);
 router.get("/getcategory", getCategoryList);
 
 export default router;

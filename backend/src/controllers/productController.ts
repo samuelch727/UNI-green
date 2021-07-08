@@ -49,10 +49,11 @@ export function createProduct(req: Request, res: Response, next: NextFunction) {
             Category.findByIdAndUpdate(req.body.categoryid, {
               productid: productid,
             })
-              .then(() => {
+              .then((result) => {
                 console.log("Successfully added all product");
                 return res.status(201).json({
                   message: "Successfully added all products",
+                  categoryid: req.body.categoryid,
                 });
               })
               .catch((err) => {
@@ -129,7 +130,7 @@ export function createCategory(
   }
 }
 
-// TODO: get product list
+// get product list
 
 /*
 {

@@ -18,7 +18,7 @@ dotenv.config({ path: "../src/.env" });
 chai.use(chaiHttp);
 
 describe("Products", () => {
-  var token: String, userid: String, subuserid: String;
+  var token: String, userid: String, subuserid: String, categoryid: any;
   before((done) => {
     Product.remove({}, (err) => {
       Category.remove({}, (err) => {
@@ -138,6 +138,7 @@ describe("Products", () => {
           res.body.should.have
             .property("message")
             .eql("Successfully added all products");
+          categoryid = res.body.categoryid;
           done();
         });
     });
@@ -351,6 +352,29 @@ describe("Products", () => {
           res.should.have.status(200);
           res.body.should.be.an("array");
           res.body.length.should.be.eql(3);
+          done();
+        });
+    });
+  });
+
+  describe("/GET get product", () => {
+    it("Test getting product with given category", (done) => {
+      let request = {
+        categoryid,
+      };
+      console.log(categoryid);
+      chai
+        .request(server)
+        .get("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          console.log(res.body);
+          res.should.have.status(200);
+          res.body.should.have.property("products");
+          res.body.should.have.property("category");
+          res.body.products.should.be.an("array");
+          res.body.products.length.should.be.eql(1);
           done();
         });
     });
