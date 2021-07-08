@@ -260,38 +260,40 @@ describe("User testing", () => {
   describe("/POST create sub user", () => {
     var userid: any, token: any;
     it("Test create sub user", (done) => {
-      var request: any = {
-        schoolid: "60cb22c1e1376625c3b6e203",
-        permissionLevel: 0,
-        verify: false,
-        name: "Chan Tai Man",
-        sid: "1155000000",
-        graddate: "2021-06-30",
-      };
-      chai
-        .request(server)
-        .get("/api/user/login")
-        .send({ username: "testuser", password: "testpassword" })
-        .end((err, res) => {
-          res.should.have.status(200);
-          userid = res.body.user._id;
-          request = {
-            ...request,
-            userid: res.body.user._id,
-          };
-          token = res.body.user.token;
-          chai
-            .request(server)
-            .post("/api/user/createsubuser")
-            .set({ authorization: "Bearer " + token })
-            .send(request)
-            .end((err, res) => {
-              res.should.have.status(201);
-              res.body.should.have.property("userid");
-              res.body.should.have.property("subuser");
-              done();
-            });
-        });
+      SubUser.remove({}).then(() => {
+        var request: any = {
+          schoolid: "60cb22c1e1376625c3b6e203",
+          permissionLevel: 0,
+          verify: false,
+          name: "Chan Tai Man",
+          sid: "1155000000",
+          graddate: "2021-06-30",
+        };
+        chai
+          .request(server)
+          .get("/api/user/login")
+          .send({ username: "testuser", password: "testpassword" })
+          .end((err, res) => {
+            res.should.have.status(200);
+            userid = res.body.user._id;
+            request = {
+              ...request,
+              userid: res.body.user._id,
+            };
+            token = res.body.user.token;
+            chai
+              .request(server)
+              .post("/api/user/createsubuser")
+              .set({ authorization: "Bearer " + token })
+              .send(request)
+              .end((err, res) => {
+                res.should.have.status(201);
+                res.body.should.have.property("userid");
+                res.body.should.have.property("subuser");
+                done();
+              });
+          });
+      });
     });
 
     it("Test create subuser with already exists sid", (done) => {

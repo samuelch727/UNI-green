@@ -212,10 +212,15 @@ export async function getCategoryList(
 
   // load subuser schoolid
   if (req.body.userid) {
+    await authenticateToken(req, res, () => {});
+    console.log(req.body.tokenPayload.subusers);
+    // if (req.body.tokenPayload.subusers.length) {
     query = {
       $or: [],
     };
-    await authenticateToken(req, res, () => {});
+    // } else {
+    //   query["availabletopublic"] = true;
+    // }
     if (!req.body.tokenPayload) return;
     let today = new Date();
     for (let i = 0; i < req.body.tokenPayload.subusers.length; i++) {
@@ -254,8 +259,10 @@ export async function getCategoryList(
         });
       }
     }
-    console.log("School id:");
-    console.log(schoolidArr);
+    query?.$or?.push({
+      availabletopublic: true,
+      available: true,
+    });
   }
   if (req.body.schoolid && !solveGivenSchool) {
     console.log("Given school, no matching subuser");
@@ -268,11 +275,16 @@ export async function getCategoryList(
 
   if (!req.body.schoolid && !req.body.userid) query["availabletopublic"] = true;
 
-  Category.find(query).then((result) => {
-    console.log("query");
-    console.log(query);
-    res.status(200).json(result);
-  });
+  console.log("query");
+  console.log(query);
+  Category.find(query)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ message: "internal server error" });
+    });
 }
 
 // TODO: update product
