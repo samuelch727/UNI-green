@@ -208,6 +208,7 @@ export async function getCategoryList(
   var query: any = {};
   let schoolidArr: any[] = [];
   let solveGivenSchool = false;
+  let userIsAdmin = false;
   console.log(req.body);
 
   // load subuser schoolid
@@ -246,6 +247,10 @@ export async function getCategoryList(
         break;
       }
 
+      if (subuser.admin) {
+        userIsAdmin = true;
+      }
+
       if (isGrad && !subuser.schooladmin) {
         query.$or.push({
           schoolid: subuser.schoolid,
@@ -266,11 +271,17 @@ export async function getCategoryList(
   }
   if (req.body.schoolid && !solveGivenSchool) {
     console.log("Given school, no matching subuser");
-    query = {
-      schoolid: req.body.schoolid,
-      availabletopublic: true,
-      available: true,
-    };
+    if (userIsAdmin) {
+      query = {
+        schoolid: req.body.schoolid,
+      };
+    } else {
+      query = {
+        schoolid: req.body.schoolid,
+        availabletopublic: true,
+        available: true,
+      };
+    }
   }
 
   if (!req.body.schoolid && !req.body.userid) query["availabletopublic"] = true;

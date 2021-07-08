@@ -34,7 +34,7 @@ describe("Products", () => {
               }).then((user) => {
                 SubUser.create({
                   userid: user._id,
-                  schoolid: "60cb22c1e1376625c3b6e203",
+                  schoolid: "60cb22c1e1376125c3b6e203",
                   verify: true,
                   name: "chan tai man",
                   sid: "1155000000",
@@ -133,6 +133,7 @@ describe("Products", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
+          console.log(res.body);
           res.should.have.status(201);
           res.body.should.have
             .property("message")
@@ -294,6 +295,51 @@ describe("Products", () => {
         });
       });
       let request = {
+        userid,
+      };
+      chai
+        .request(server)
+        .get("/api/product/getcategory")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an("array");
+          res.body.length.should.be.eql(3);
+          done();
+        });
+    });
+    it("Test searching category for public", (done) => {
+      let request = {};
+      chai
+        .request(server)
+        .get("/api/product/getcategory")
+        .send(request)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an("array");
+          res.body.length.should.be.eql(3);
+          done();
+        });
+    });
+    it("Test searching category with given school", (done) => {
+      let request = {
+        schoolid: "60cb22c1e1376625c3b6e203",
+      };
+      chai
+        .request(server)
+        .get("/api/product/getcategory")
+        .send(request)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an("array");
+          res.body.length.should.be.eql(1);
+          done();
+        });
+    });
+    it("Test searching category with given schoolid and userid", (done) => {
+      let request = {
+        schoolid: "60cb22c1e1376625c3b6e203",
         userid,
       };
       chai

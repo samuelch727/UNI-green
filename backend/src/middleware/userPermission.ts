@@ -132,8 +132,8 @@ export function checkUserAdminOrSchoolAdmin(
     req.body.tokenPayload.subusers.map((subuserid: String) => {
       return SubUser.findById(subuserid).then((subuser) => {
         if (
-          subuser?.schoolid == req.body.schoolid &&
-          (subuser?.admin || subuser?.schooladmin)
+          (subuser?.schoolid == req.body.schoolid && subuser?.schooladmin) ||
+          subuser?.admin
         ) {
           console.log("User has admin permission");
           next();
