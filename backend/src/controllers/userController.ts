@@ -403,7 +403,7 @@ export function deleteUser(
       ).then(() => {
         return res.status(201).json({
           message:
-            "User account will be deactivated before deletion after 30 days. Login to reactiveate account.",
+            "User account will be deactivated before deletion after 30 days. Login to reactivate account.",
         });
       });
     })
