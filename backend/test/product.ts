@@ -18,7 +18,11 @@ dotenv.config({ path: "../src/.env" });
 chai.use(chaiHttp);
 
 describe("Products", () => {
-  var token: String, userid: String, subuserid: String, categoryid: any;
+  var token: String,
+    userid: String,
+    subuserid: String,
+    categoryid: any,
+    productid: String;
   before((done) => {
     Product.remove({}, (err) => {
       Category.remove({}, (err) => {
@@ -139,6 +143,7 @@ describe("Products", () => {
             .property("message")
             .eql("Successfully added all products");
           categoryid = res.body.categoryid;
+          productid = res.body.productid[0];
           done();
         });
     });
@@ -375,6 +380,37 @@ describe("Products", () => {
           res.body.should.have.property("category");
           res.body.products.should.be.an("array");
           res.body.products.length.should.be.eql(1);
+          done();
+        });
+    });
+  });
+
+  describe("/PATCH update product", () => {
+    it("Test updating product", (done) => {
+      let request = {
+        schoolid: "60cb22c1e1376625c3b6e203",
+        userid: userid,
+        productid: productid,
+        product: {
+          addNumStock: 5,
+          available: true,
+          imgUrl: [],
+          price: 20.0,
+          producttype: {
+            type: "size",
+            name: "l",
+          },
+        },
+        name: "test rename",
+      };
+
+      chai
+        .request(server)
+        .patch("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          console.log(res.body);
           done();
         });
     });

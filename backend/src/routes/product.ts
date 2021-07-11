@@ -5,6 +5,7 @@ import {
   createCategory,
   getProductList,
   getCategoryList,
+  updateProduct,
 } from "../controllers/productController";
 import { authenticateToken } from "../middleware/authentication";
 import {
@@ -62,6 +63,12 @@ router.post(
 */
 
 router.get("/product", getProductList);
+router.patch(
+  "/product",
+  authenticateToken,
+  checkUserAdminOrSchoolAdmin,
+  updateProduct
+);
 router.get("/getcategory", getCategoryList);
 
 export default router;

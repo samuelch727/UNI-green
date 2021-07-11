@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import Product from "../models/Product";
 import Category from "../models/Category";
+import {
+  getSubuserDataById,
+  getUserData,
+  isSubuserGrad,
+} from "./userController";
+import { authenticateToken } from "../middleware/authentication";
 
 interface Product {
   schoolid: String;
@@ -54,6 +60,7 @@ export function createProduct(req: Request, res: Response, next: NextFunction) {
                 return res.status(201).json({
                   message: "Successfully added all products",
                   categoryid: req.body.categoryid,
+                  productid,
                 });
               })
               .catch((err) => {
@@ -185,13 +192,6 @@ export function getProductList(
     });
 }
 
-import {
-  getSubuserDataById,
-  getUserData,
-  isSubuserGrad,
-} from "./userController";
-import { authenticateToken } from "../middleware/authentication";
-
 // get category list
 /*
 {
@@ -299,5 +299,57 @@ export async function getCategoryList(
     });
 }
 
-// TODO: update product
+// TODO: update product information
+/*
+  {
+    schoolid : school id,
+    userid: user id,
+    productid: product id,
+    product: { 
+      addNumStock: add number of stock,
+      available: is product available,
+      imgUrl: array of images url,
+      price: price of product,
+      producttype: {
+        type: name of the type category,
+        name: name of the type,
+      },
+      name: product name,
+    }
+  }
+*/
+export function updateProduct(req: Request, res: Response, next: NextFunction) {
+  Product.findById(req.body.productid).then((product) => {
+    if (!product) {
+      return res.status(401).json({
+        message: "Product not found",
+      });
+    }
+    if (product?.schoolid != req.body.schoolid) {
+      return res.status(401).json({
+        message: "Permission denied",
+      });
+    }
+    product.stock += req.body.product.addNumStock;
+    product.available = req.body.product.available;
+    product.imgUrl = req.body.product.imgUrl;
+    product.price = req.body.product.price;
+    product.producttype.type = req.body.product.producttype.type;
+    product.producttype.name = req.body.product.producttype.name;
+    product.name = req.body.product.name;
+    product
+      .save()
+      .then(() => {
+        return res.status(201).json({
+          message: "Updated product",
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          message: "Internal server error",
+        });
+      });
+  });
+}
+
 // TODO: delete product
