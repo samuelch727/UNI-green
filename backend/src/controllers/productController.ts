@@ -334,6 +334,24 @@ export function updateProduct(req: Request, res: Response, next: NextFunction) {
     product.available = req.body.product.available;
     product.imgUrl = req.body.product.imgUrl;
     product.price = req.body.product.price;
+    if (product.producttype.type != req.body.product.producttype.type) {
+      Category.findById(product.categoryid).then((category) => {
+        if (!category) {
+          console.log("Fail to find category");
+          return res.status(500).json({ message: "internal server error" });
+        }
+        if (
+          !category?.producttype.includes(req.body.product.producttype.type)
+        ) {
+          category?.producttype.push(req.body.product.producttype.type);
+          category.save().catch((err) => {
+            console.log("fail to update category");
+            console.log(err);
+            return res.status(500).json({ message: "internal server error" });
+          });
+        }
+      });
+    }
     product.producttype.type = req.body.product.producttype.type;
     product.producttype.name = req.body.product.producttype.name;
     product.name = req.body.product.name;
@@ -353,3 +371,34 @@ export function updateProduct(req: Request, res: Response, next: NextFunction) {
 }
 
 // TODO: delete product
+/*
+  {
+    userid: user id,
+    schoolid: school id,
+    productid: product id
+  }
+*/
+export function deleteProduct(req: Request, res: Response, next: NextFunction) {
+  if (!req.body.schoolid)
+    return res.status(401).json({ message: "Invalid input" });
+  Product.findById(req.body.productid)
+    .then((product) => {
+      if (!product)
+        return res.status(401).json({ message: "Product not found" });
+      if (product.schoolid != req.body.schoolid)
+        return res.status(401).json({ message: "Permission denied" });
+      product
+        .delete()
+        .then(() => {
+          return res.status(201).json({ message: "Product deleted" });
+        })
+        .catch((err: any) => {
+          console.log("error when deleting product", err);
+          return res.status(500).json({ message: "internal server error" });
+        });
+    })
+    .catch((err) => {
+      console.log("error when finding product", err);
+      return res.status(500).json({ message: "internal server error" });
+    });
+}

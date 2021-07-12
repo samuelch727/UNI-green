@@ -415,4 +415,59 @@ describe("Products", () => {
         });
     });
   });
+
+  describe("/DELETE delete product", () => {
+    it("test invalid input (missing schoolid)", (done) => {
+      let request = {
+        userid: userid,
+        productid: productid,
+      };
+      chai
+        .request(server)
+        .delete("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.have
+            .property("message")
+            .eql("Missing school ID, permission denied.");
+          done();
+        });
+    });
+    it("test invalid input (wrong schoolid)", (done) => {
+      let request = {
+        schoolid: "60cb22c1e1376625c3b6e204",
+        userid: userid,
+        productid: productid,
+      };
+      chai
+        .request(server)
+        .delete("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.have.property("message").eql("Permission denied");
+          done();
+        });
+    });
+    it("test deleting product", (done) => {
+      let request = {
+        schoolid: "60cb22c1e1376625c3b6e203",
+        userid: userid,
+        productid: productid,
+      };
+      chai
+        .request(server)
+        .delete("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.body.should.have.property("message").eql("Product deleted");
+          done();
+        });
+    });
+  });
 });

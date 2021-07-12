@@ -6,6 +6,7 @@ import {
   getProductList,
   getCategoryList,
   updateProduct,
+  deleteProduct,
 } from "../controllers/productController";
 import { authenticateToken } from "../middleware/authentication";
 import {
@@ -68,6 +69,12 @@ router.patch(
   authenticateToken,
   checkUserAdminOrSchoolAdmin,
   updateProduct
+);
+router.delete(
+  "/product",
+  authenticateToken,
+  checkUserAdminOrSchoolAdmin,
+  deleteProduct
 );
 router.get("/getcategory", getCategoryList);
 
