@@ -528,7 +528,7 @@ POST: /api/products/product
 }
 ```
 
-**Error handling**
+**Error handling**  
 Invalid category id.  
 Code: `401`  
 Content:
@@ -556,5 +556,104 @@ Content:
 ```javascript
 {
   "message": "internal server error"
+}
+```
+
+### getProduct
+
+Get products from a category.  
+If category is resited (example: not available category need admin / school admin user to get it's product), userid schoolid (except for admin) and token are required.
+
+```
+POST: /api/products/product
+```
+
+**Request body:**
+
+```javascript
+{
+    **OPTIONAL** userid: user id, // Required when category is resited to certain user
+    **OPTIONAL** schoolid: school id, // Required when category is resited to certain user
+    categoryid: category id,
+}
+```
+
+**Request body example:**
+
+```javascript
+{
+  categoryid: "60ee7d0fd2b5d8099c63d8a5";
+}
+```
+
+**Response body example:**
+
+```javascript
+{
+  products: [
+    {
+      imgUrl: [Array],
+      schoolid: "60cb22c1e1376625c3b6e203",
+      categoryid: "60ee7d0fd2b5d8099c63d8a5",
+      stock: 3,
+      available: true,
+      price: [Object],
+      producttype: [Object],
+      name: "M Cloth",
+      __v: 0,
+    },
+    {
+      imgUrl: [Array],
+      schoolid: "60cb22c1e1376625c3b6e203",
+      categoryid: "60ee7d0fd2b5d8099c63d8a5",
+      stock: 3,
+      available: true,
+      price: [Object],
+      producttype: [Object],
+      name: "L Cloth",
+      __v: 0,
+    },
+  ];
+}
+```
+
+**Error handling**  
+Invalid token error.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "invalid token"
+}
+```
+
+No permission to access category.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "Permission denied"
+}
+```
+
+Invalid input.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "Invalid input"
+}
+```
+
+Given category not found.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "Category not found"
 }
 ```
