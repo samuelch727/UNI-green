@@ -462,26 +462,26 @@ POST: /api/products/product
 
 ```javascript
 {
-  "userid": userid,
-  "subuserid": subuserid,
-  "schoolid": schoolid,
-  "newcategory": Boolean, // true if create new category, false if add product in existing category.
-  **OPTIONAL** "categoryid": categoryid, // category id is needed when adding product to existing category.
-  **OPTIONAL** "name": String, // category name. (Create new category only)
-  **OPTIONAL** "description": String, // category description. (Create new category only)
-  **OPTIONAL** "available": boolean, // is category available? (Create new category only)
-  **OPTIONAL** "producttype": [String], // product type in category. (Create new category only)
-  **OPTIONAL** "availabletopublic": boolean, // is category available to public? (Create new category only)
-  **OPTIONAL** "availabletograd": boolean, // is category available to gradurate student? (Create new category only)
-  "products": [ // new products to add
-    "stock": Number, // number of stock
-    "available": Boolean, // is product available?
-    "imgUrl": [String], // imgUrl of product. (Can be empty)
-    "price": mongoose.Types.Decimal128, // price of product
-    "producttype": [{ //product type info
-      "typename": typename, // type name. Should exist in category producttype attribute array (example: Size)
-      "name": name // name within the type (example: M)
-    }];
-  ]
+    "userid": userid,
+    "subuserid": subuserid,
+    "schoolid": schoolid,
+    "newcategory": Boolean, // true if create new category, false if add product in existing category.
+    **OPTIONAL** "categoryid": categoryid, // category id is needed when adding product to existing category.
+    **OPTIONAL** "name": String, // category name. (Create new category only)
+    **OPTIONAL** "description": String, // category description. (Create new category only)
+    **OPTIONAL** "available": boolean, // is category available? (Create new category only)
+    **OPTIONAL** "producttype": [String], // product type in category. (Create new category only)
+    **OPTIONAL** "availabletopublic": boolean, // is category available to public? (Create new category only)
+    **OPTIONAL** "availabletograd": boolean, // is category available to gradurate student? (Create new category only)
+    "products": [ // new products to add
+        "stock": Number, // number of stock
+        "available": Boolean, // is product available?
+        "imgUrl": [String], // imgUrl of product. (Can be empty)
+        "price": mongoose.Types.Decimal128, // price of product
+        "producttype": [{ //product type info
+            "typename": typename, // type name. Should exist in category producttype attribute array (example: Size)
+            "name": name // name within the type (example: M)
+        }];
+    ]
 }
 ```
