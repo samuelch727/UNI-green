@@ -408,7 +408,7 @@ export function deleteUser(
     })
     .catch((err) => {
       return res.status(500).json({
-        message: err,
+        message: "internal server error",
       });
     });
 }

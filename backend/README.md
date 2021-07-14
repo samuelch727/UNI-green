@@ -20,6 +20,16 @@ API documentation for [UNI-green](https://github.com/samuelch727/UNI-green).
         </ul>
     </td>
   </tr>
+  <tr>
+    <td valign="top">
+      <li><a href="#Schools">Schools</a></li>
+        <ul>
+          <li><a href="#signup">signup</a></li>
+          <li><a href="#update-school-info">update-school-info</a></li>
+          <li><a href="#deletet-school">delete-school</a></li>
+        </ul>
+    </td>
+  </tr>
 </table>
 
 # Users
@@ -217,7 +227,6 @@ GET: /api/user/getsubusers
 ```
 
 Token is needed for this request.  
-Either username / email is needed to verify user.  
 request body example:
 
 ```javascript
@@ -251,6 +260,68 @@ Content:
 ```javascript
 {
   "message": "invalid token"
+}
+```
+
+Internal server error.  
+Code: `500`  
+Content:
+
+```javascript
+{
+  "message": "internal server error"
+}
+```
+
+#### deleteuser
+
+Deactivate user and all its subusers and delete all account in 30 days.
+
+```
+PUT: /api/user/deleteuser
+```
+
+Token is needed for this request.  
+Either username / email is needed to verify user.  
+request body example:
+
+```javascript
+{
+  {
+  "username": "alex", // Optional
+  "password": "alexpassword",
+  "email": "alex@email.com" // Optional
+}
+
+}
+```
+
+return body example:
+
+```javascript
+{
+  "message": "User account will be deactivated before deletion after 30 days. Login to reactivate account."
+}
+```
+
+**Error handling**  
+Invalid token error.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "invalid token"
+}
+```
+
+Incorrect credentials for login.  
+Code: `400`  
+Content:
+
+```javascript
+{
+  "message": "Incorrect credentials."
 }
 ```
 
