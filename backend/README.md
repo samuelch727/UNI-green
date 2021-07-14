@@ -36,7 +36,7 @@ API documentation for [UNI-green](https://github.com/samuelch727/UNI-green).
 
 # Users
 
-#### signup
+### signup
 
 Create new user.
 
@@ -76,7 +76,7 @@ Content:
 }
 ```
 
-#### login
+### login
 
 Login user by username / email
 
@@ -114,7 +114,7 @@ return body example:
 }
 ```
 
-#### createsubuser
+### createsubuser
 
 Create new subuser for existing user.
 
@@ -153,7 +153,7 @@ return body example:
 }
 ```
 
-#### changepassword
+### changepassword
 
 Change password for existing user.
 
@@ -220,7 +220,7 @@ Content:
 }
 ```
 
-#### getsubusers
+### getsubusers
 
 Get all subusers from user.
 
@@ -275,7 +275,7 @@ Content:
 }
 ```
 
-#### deleteuser
+### deleteuser
 
 Deactivate user and all its subusers and delete all account in 30 days.
 
@@ -339,7 +339,7 @@ Content:
 
 # School
 
-#### signup
+### signup
 
 Create new school.
 
@@ -379,7 +379,7 @@ return body example:
 }
 ```
 
-#### update-school-info
+### update-school-info
 
 Update school information.
 
@@ -415,7 +415,7 @@ return body example:
 }
 ```
 
-#### deletet-school
+### deletet-school
 
 Delete the existing school.
 
