@@ -183,7 +183,7 @@ export function loginUser(
  * @returns
  */
 export function sendUserData(req: express.Request, res: express.Response) {
-  return res.status(200).json({
+  return res.status(req.method == "POST" ? 201 : 200).json({
     user: req.body.user,
   });
 }
@@ -248,6 +248,7 @@ export function addSubUser(
           sid: result.sid,
         };
         req.body.subuser = subuser;
+        req.body.tokenPayload.subusers.push(result._id);
         next();
         return;
       } catch (err: any) {
@@ -286,7 +287,11 @@ export function addBatchSubUser(
   );
 }
 
-export function updateSubuserList(req: express.Request, res: express.Response) {
+export function updateSubuserList(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
   User.findByIdAndUpdate(
     req.body.userid,
     {
@@ -295,10 +300,8 @@ export function updateSubuserList(req: express.Request, res: express.Response) {
     { new: true, upsert: true }
   )
     .then((user) => {
-      return res.status(201).json({
-        userid: req.body.userid,
-        subuser: req.body.subuser,
-      });
+      next();
+      return;
     })
     .catch((err) => {
       return res.status(501).json({
@@ -314,23 +317,19 @@ export function updatePassword(
 ) {
   bcrypt.hash(req.body.newpassword, 10, (err: any, hash: any) => {
     if (err) {
-      return res.status(501).json({
-        message: err,
+      return res.status(500).json({
+        message: "internal server error",
       });
     }
     if (hash) {
       User.findByIdAndUpdate(req.body.userid, { password: hash })
         .then((user) => {
           next();
-          // return res.status(201).json({
-          //   message: "password reseted",
-          //   token: req.body.user.token,
-          // });
           return;
         })
         .catch((err) => {
-          return res.status(501).json({
-            message: err,
+          return res.status(500).json({
+            message: "internal server error",
           });
         });
     }
@@ -364,7 +363,7 @@ export function getSubuserData(
     })
     .catch((err: any) => {
       return res.status(500).json({
-        message: "Error when loading subuser",
+        message: "internal server error",
       });
     });
   return;
@@ -403,13 +402,13 @@ export function deleteUser(
       ).then(() => {
         return res.status(201).json({
           message:
-            "User account will be deactivated before deletion after 30 days. Login to reactiveate account.",
+            "User account will be deactivated before deletion after 30 days. Login to reactivate account.",
         });
       });
     })
     .catch((err) => {
       return res.status(500).json({
-        message: err,
+        message: "internal server error",
       });
     });
 }

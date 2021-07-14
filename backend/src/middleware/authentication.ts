@@ -47,8 +47,8 @@ export async function authenticateToken(
           }
         }
         console.log("error when authenticate");
-        return res.status(401).json({
-          message: "Internal server error",
+        return res.status(500).json({
+          message: "internal server error",
         });
       }
     );
@@ -58,6 +58,7 @@ export async function authenticateToken(
 export function generateToken(req: Request, res: Response, next: NextFunction) {
   console.log("generating token");
   if (process?.env?.ACCESS_TOKEN_SECRET) {
+    if (req.body.tokenPayload.exp) delete req.body.tokenPayload.exp;
     const token = jwt.sign(
       req.body.tokenPayload,
       process.env.ACCESS_TOKEN_SECRET,
@@ -74,9 +75,9 @@ export function generateToken(req: Request, res: Response, next: NextFunction) {
     return;
   } else {
     console.log("Missing access token.");
-    return res.status(501).json({
+    return res.status(500).json({
       login: false,
-      message: "Internal server error.",
+      message: "internal server error",
     });
   }
 }

@@ -20,6 +20,9 @@ const usersRouter = require("./routes/user");
 import productRouter from "./routes/product";
 app.use("/api/user/", usersRouter);
 app.use("/api/product/", productRouter);
+const schoolsRouter = require("./routes/school");
+app.use("/api/school/", schoolsRouter);
+//For front end -- Require user(school)'s input: name, description, iconUrl, address, tel
 
 app.listen(5000, () => {
   console.log("Server running");
