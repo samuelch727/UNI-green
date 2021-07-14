@@ -12,6 +12,12 @@ API documentation for [UNI-green](https://github.com/samuelch727/UNI-green).
           <li><a href="#getsubusers">getsubusers</a></li>
           <li><a href="#deleteuser">deleteuser</a></li>
         </ul>
+      <li><a href="#Schools">Schools</a></li>
+        <ul>
+          <li><a href="#signup">signup</a></li>
+          <li><a href="#update-school-info">update-school-info</a></li>
+          <li><a href="#deletet-school">delete-school</a></li>
+        </ul>
     </td>
   </tr>
 </table>
@@ -47,19 +53,6 @@ return body example:
   }
 }
 ```
-
-<table>
-  <tr>
-    <td valign="top">
-    <li><a href="#Schools">Schools</a></li>
-        <ul>
-          <li><a href="#signup">signup</a></li>
-          <li><a href="#update-school-info">update-school-info</a></li>
-          <li><a href="#deletet-school">delete-school</a></li>
-        </ul>
-    </td>
-  </tr>
-</table>
 
 # School
 
