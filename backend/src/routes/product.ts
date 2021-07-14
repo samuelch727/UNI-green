@@ -76,6 +76,6 @@ router.delete(
   checkUserAdminOrSchoolAdmin,
   deleteProduct
 );
-router.get("/getcategory", getCategoryList);
+router.get("/category", getCategoryList);
 
 export default router;

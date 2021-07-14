@@ -21,6 +21,16 @@ API documentation for [UNI-green](https://github.com/samuelch727/UNI-green).
           <li><a href="#deletet-school">delete-school</a></li>
         </ul>
     </td>
+    <td valign="top">
+      <li><a href="#Products">Products</a></li>
+        <ul>
+          <li><a href="#createProduct">createProduct</a></li>
+          <li><a href="#getProduct">getProduct</a></li>
+          <li><a href="#updateProduct">updateProduct</a></li>
+          <li><a href="#deleteProduct">deleteProduct</a></li>
+          <li><a href="#getCategory">getCategory</a></li>
+        </ul>
+    </td>
   </tr>
 </table>
 
@@ -438,4 +448,40 @@ return body example:
 
 ```
 
+```
+
+# Products
+
+### createProduct
+
+Create new category and products.
+
+```
+POST: /api/products/product
+```
+
+```javascript
+{
+        "userid": userid,
+        "subuserid": subuserid,
+        "schoolid": schoolid,
+        "newcategory": Boolean, // true if create new category, false if add product in existing category.
+        **OPTIONAL** "categoryid": categoryid, // category id is needed when adding product to existing category.
+        **OPTIONAL** "name": String, // category name. (Create new category only)
+        **OPTIONAL** "description": String, // category description. (Create new category only)
+        **OPTIONAL** "available": boolean, // is category available? (Create new category only)
+        **OPTIONAL** "producttype": [String], // product type in category. (Create new category only)
+        **OPTIONAL** "availabletopublic": boolean, // is category available to public? (Create new category only)
+        **OPTIONAL** "availabletograd": boolean, // is category available to gradurate student? (Create new category only)
+        "products": [ // new products to add
+            "stock": Number, // number of stock
+            "available": Boolean, // is product available?
+            "imgUrl": [String], // imgUrl of product. (Can be empty)
+            "price": mongoose.Types.Decimal128, // price of product
+            "producttype": [{ //product type info
+                "typename": typename, // type name. Should exist in category producttype attribute array (example: Size)
+                "name": name // name within the type (example: M)
+            }];
+        ]
+    }
 ```

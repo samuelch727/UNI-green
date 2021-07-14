@@ -236,7 +236,7 @@ describe("Products", () => {
       };
       chai
         .request(server)
-        .get("/api/product/getcategory")
+        .get("/api/product/category")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
@@ -252,7 +252,7 @@ describe("Products", () => {
       };
       chai
         .request(server)
-        .get("/api/product/getcategory")
+        .get("/api/product/category")
         .send(request)
         .end((err, res) => {
           res.should.have.status(401);
@@ -305,7 +305,7 @@ describe("Products", () => {
       };
       chai
         .request(server)
-        .get("/api/product/getcategory")
+        .get("/api/product/category")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
@@ -319,7 +319,7 @@ describe("Products", () => {
       let request = {};
       chai
         .request(server)
-        .get("/api/product/getcategory")
+        .get("/api/product/category")
         .send(request)
         .end((err, res) => {
           res.should.have.status(200);
@@ -334,7 +334,7 @@ describe("Products", () => {
       };
       chai
         .request(server)
-        .get("/api/product/getcategory")
+        .get("/api/product/category")
         .send(request)
         .end((err, res) => {
           res.should.have.status(200);
@@ -350,7 +350,7 @@ describe("Products", () => {
       };
       chai
         .request(server)
-        .get("/api/product/getcategory")
+        .get("/api/product/category")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
