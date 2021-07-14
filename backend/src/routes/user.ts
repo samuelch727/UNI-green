@@ -14,15 +14,7 @@ import { authenticateToken, generateToken } from "../middleware/authentication";
 
 router.post("/signup", addUser, generateToken, sendUserData);
 router.get("/login", loginUser, generateToken, getSubuserData, sendUserData);
-router.post(
-  "/createsubuser",
-  authenticateToken,
-  addSubUser,
-  updateSubuserList,
-  generateToken,
-  getSubuserData,
-  sendUserData
-);
+router.post("/createsubuser", authenticateToken, addSubUser, updateSubuserList);
 router.post(
   "/changepassword",
   authenticateToken,

@@ -50,7 +50,7 @@ export function addSchool(
 export function sendSchoolData(req: express.Request, res: express.Response) {
   console.log(req.body.school);
   return res.status(200).json({
-    user: req.body.school,
+    school: req.body.school,
   });
 }
 
