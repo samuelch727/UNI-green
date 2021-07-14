@@ -317,23 +317,19 @@ export function updatePassword(
 ) {
   bcrypt.hash(req.body.newpassword, 10, (err: any, hash: any) => {
     if (err) {
-      return res.status(501).json({
-        message: err,
+      return res.status(500).json({
+        message: "internal server error",
       });
     }
     if (hash) {
       User.findByIdAndUpdate(req.body.userid, { password: hash })
         .then((user) => {
           next();
-          // return res.status(201).json({
-          //   message: "password reseted",
-          //   token: req.body.user.token,
-          // });
           return;
         })
         .catch((err) => {
-          return res.status(501).json({
-            message: err,
+          return res.status(500).json({
+            message: "internal server error",
           });
         });
     }
@@ -367,7 +363,7 @@ export function getSubuserData(
     })
     .catch((err: any) => {
       return res.status(500).json({
-        message: "Error when loading subuser",
+        message: "internal server error",
       });
     });
   return;

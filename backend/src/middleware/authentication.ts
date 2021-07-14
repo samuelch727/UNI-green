@@ -47,8 +47,8 @@ export function authenticateToken(
           }
         }
         console.log("error when authenticate");
-        return res.status(401).json({
-          message: "Internal server error",
+        return res.status(500).json({
+          message: "internal server error",
         });
       }
     );
@@ -75,9 +75,9 @@ export function generateToken(req: Request, res: Response, next: NextFunction) {
     return;
   } else {
     console.log("Missing access token.");
-    return res.status(501).json({
+    return res.status(500).json({
       login: false,
-      message: "Internal server error.",
+      message: "internal server error",
     });
   }
 }

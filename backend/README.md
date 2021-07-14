@@ -177,6 +177,47 @@ return body example:
 }
 ```
 
+**Error handling**  
+Invalid token error.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "invalid token"
+}
+```
+
+Incorrect credentials for login.  
+Code: `400`  
+Content:
+
+```javascript
+{
+  "message": "Incorrect credentials."
+}
+```
+
+Incorrect credentials for login.  
+Code: `400`  
+Content:
+
+```javascript
+{
+  "message": "Incorrect credentials."
+}
+```
+
+Internal server error.  
+Code: `500`  
+Content:
+
+```javascript
+{
+  "message": "internal server error"
+}
+```
+
 # School
 
 #### signup
