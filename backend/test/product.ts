@@ -126,7 +126,7 @@ describe("Products", () => {
             price: "12.99",
             producttype: {
               type: "size",
-              name: "l",
+              name: "m",
             },
           },
         ],
@@ -144,6 +144,41 @@ describe("Products", () => {
             .eql("Successfully added all products");
           categoryid = res.body.categoryid;
           productid = res.body.productid[0];
+          done();
+        });
+    });
+    it("Test adding product to existing category", (done) => {
+      let request = {
+        userid: userid,
+        subuserid: subuserid,
+        schoolid: "60cb22c1e1376625c3b6e203",
+        newcategory: false,
+        categoryid,
+        products: [
+          {
+            name: "L Cloth",
+            stock: "3",
+            available: true,
+            imgUrl: ["imgurl"],
+            price: "12.99",
+            producttype: {
+              type: "size",
+              name: "l",
+            },
+          },
+        ],
+      };
+      chai
+        .request(server)
+        .post("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          console.log(res.body);
+          res.should.have.status(201);
+          res.body.should.have
+            .property("message")
+            .eql("Successfully added all products");
           done();
         });
     });
@@ -378,7 +413,7 @@ describe("Products", () => {
           res.should.have.status(200);
           res.body.should.have.property("products");
           res.body.products.should.be.an("array");
-          res.body.products.length.should.be.eql(1);
+          res.body.products.length.should.be.eql(2);
           done();
         });
     });

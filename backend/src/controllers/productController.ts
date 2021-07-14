@@ -68,16 +68,16 @@ export function createProduct(req: Request, res: Response, next: NextFunction) {
               .catch((err) => {
                 console.log("Error when adding product id to category");
                 console.log(err);
-                return res.status(401).json({
-                  message: err,
+                return res.status(500).json({
+                  message: "internal server error",
                 });
               });
           })
           .catch((err) => {
             console.log("Error when adding products");
             console.log(err);
-            return res.status(401).json({
-              message: err,
+            return res.status(500).json({
+              message: "internal server error",
             });
           });
       } else {
@@ -90,8 +90,8 @@ export function createProduct(req: Request, res: Response, next: NextFunction) {
     .catch((err) => {
       console.log("Error when searching category");
       console.log(err);
-      return res.status(401).json({
-        message: err,
+      return res.status(500).json({
+        message: "internal server error",
       });
     });
 }

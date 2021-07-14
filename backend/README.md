@@ -460,6 +460,8 @@ Create new category and products.
 POST: /api/products/product
 ```
 
+**Request body:**
+
 ```javascript
 {
     "userid": userid,
@@ -483,5 +485,76 @@ POST: /api/products/product
             "name": name // name within the type (example: M)
         }];
     ]
+}
+```
+
+**Request body example:**
+
+```javascript
+{
+    "userid": userid,
+    "subuserid": subuserid,
+    "schoolid": "60cb22c1e1376625c3b6e203",
+    "newcategory": true,
+    "name": "test new category",
+    "description": "test new category description",
+    "available": true,
+    "producttype": ["size"],
+    "availabletopublic": true,
+    "availabletograd": true,
+    "products": [
+        {
+          "name": "M Cloth",
+          "stock": "3",
+          "available": true,
+          "imgUrl": ["imgurl"],
+          "price": "12.99",
+          "producttype": {
+            "type": "size",
+            "name": "l",
+          },
+        },
+    ],
+}
+```
+
+**Return body example:**
+
+```javascript
+{
+  message: "Successfully added all product",
+  categoryid: "60cb22c1e1376625c3b6e203",
+  productid:["60cb22c1e1376625c3b6e203"]
+}
+```
+
+**Error handling**
+Invalid category id.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "No matching category found when adding products"
+}
+```
+
+Category with same name already exists.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "Category with same name already exist."
+}
+```
+
+Internal server error.  
+Code: `500`  
+Content:
+
+```javascript
+{
+  "message": "internal server error"
 }
 ```
