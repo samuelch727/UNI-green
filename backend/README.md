@@ -198,13 +198,59 @@ Content:
 }
 ```
 
-Incorrect credentials for login.  
-Code: `400`  
+Internal server error.  
+Code: `500`  
 Content:
 
 ```javascript
 {
-  "message": "Incorrect credentials."
+  "message": "internal server error"
+}
+```
+
+#### getsubusers
+
+Get all subusers from user.
+
+```
+GET: /api/user/getsubusers
+```
+
+Token is needed for this request.  
+Either username / email is needed to verify user.  
+request body example:
+
+```javascript
+{
+  "userid": "60e05b217c789d4600ebc806",
+}
+```
+
+return body example:
+
+```javascript
+{
+  "user": {
+        "subusers": [
+            {
+                "_id": "60ee5d6ce1cd34fc5860555d",
+                "schoolid": "60cb22c1e1376625c3b6e203",
+                "name": "Chan Tai Man",
+                "sid": "1155000000"
+            }
+        ]
+    }
+}
+```
+
+**Error handling**  
+Invalid token error.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "invalid token"
 }
 ```
 
