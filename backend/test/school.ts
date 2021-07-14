@@ -88,9 +88,7 @@ describe("School testing", () => {
         .end((err, res) => {
           console.log(res.body);
           res.should.have.status(201);
-          res.body.should.have
-            .property("message")
-            .eql("School Already Created");
+          res.body.should.have.property("message").eql("School Created");
           done();
         });
     });
@@ -319,7 +317,7 @@ describe("School testing", () => {
       };
       chai
         .request(server)
-        .put("/api/school/delect-school")
+        .put("/api/school/delete-school")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
@@ -331,6 +329,7 @@ describe("School testing", () => {
           done();
         });
     });
+
     it("Test delete non exist school account", (done) => {
       let request = {
         name: "FKU",
@@ -344,7 +343,7 @@ describe("School testing", () => {
       };
       chai
         .request(server)
-        .put("/api/school/delect-school")
+        .put("/api/school/delete-school")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
