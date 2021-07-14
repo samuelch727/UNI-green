@@ -19,8 +19,6 @@ API documentation for [UNI-green](https://github.com/samuelch727/UNI-green).
           <li><a href="#deletet-school">delete-school</a></li>
         </ul>
     </td>
-  </tr>
-  <tr>
     <td valign="top">
       <li><a href="#Schools">Schools</a></li>
         <ul>
