@@ -22,11 +22,17 @@ const productTypeSchema = new mongoose.Schema({
 });
 
 const productSchema = new mongoose.Schema({
-  schoolid: { type: mongoose.Types.ObjectId, required: true, ref: "School" },
+  schoolid: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+    ref: "School",
+    index: true,
+  },
   categoryid: {
     type: mongoose.Types.ObjectId,
     required: true,
     ref: "Category",
+    index: true,
   },
   stock: { type: Number, required: true },
   available: { type: Boolean, required: true },

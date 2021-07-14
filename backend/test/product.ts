@@ -116,7 +116,7 @@ describe("Products", () => {
         available: true,
         producttype: ["size"],
         availabletopublic: true,
-        availabletograd: false,
+        availabletograd: true,
         products: [
           {
             name: "M Cloth",
@@ -377,10 +377,88 @@ describe("Products", () => {
           console.log(res.body);
           res.should.have.status(200);
           res.body.should.have.property("products");
-          res.body.should.have.property("category");
           res.body.products.should.be.an("array");
           res.body.products.length.should.be.eql(1);
           done();
+        });
+    });
+    it("Test getting product without given category", (done) => {
+      let request = {};
+      chai
+        .request(server)
+        .get("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          console.log(res.body);
+          res.should.have.status(401);
+          res.body.should.have.property("message").eql("Invalid input");
+          done();
+        });
+    });
+    it("Test getting product with wrong category id", (done) => {
+      let request = {};
+      chai
+        .request(server)
+        .get("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send({ categoryid: "60cb22c1e1376625c3b6e203" })
+        .end((err, res) => {
+          console.log(res.body);
+          res.should.have.status(401);
+          res.body.should.have.property("message").eql("Category not found");
+          done();
+        });
+    });
+    it("Test getting product of nonavailable category", (done) => {
+      let categoryid;
+      let request = {
+        userid: userid,
+        subuserid: subuserid,
+        schoolid: "60cb22c1e1376625c3b6e203",
+        newcategory: true,
+        name: "test permission",
+        description: "test new category description",
+        available: false,
+        producttype: ["size"],
+        availabletopublic: true,
+        availabletograd: true,
+        products: [
+          {
+            name: "M Cloth",
+            stock: "3",
+            available: true,
+            imgUrl: ["imgurl"],
+            price: "12.99",
+            producttype: {
+              type: "size",
+              name: "l",
+            },
+          },
+        ],
+      };
+      chai
+        .request(server)
+        .post("/api/product/product")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          categoryid = res.body.categoryid;
+          chai
+            .request(server)
+            .get("/api/product/product")
+            .set({ authorization: "Bearer " + token })
+            .send({
+              userid,
+              categoryid,
+            })
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.have.property("products");
+              res.body.products.should.be.an("array");
+              res.body.products.length.should.be.eql(1);
+              done();
+            });
         });
     });
   });

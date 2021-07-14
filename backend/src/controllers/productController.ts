@@ -5,6 +5,8 @@ import {
   getSubuserDataById,
   getUserData,
   isSubuserGrad,
+  checkUserAdmin,
+  checkUserSchoolAdmin,
 } from "./userController";
 import { authenticateToken } from "../middleware/authentication";
 
@@ -148,46 +150,138 @@ export function createCategory(
 }
 */
 
-export function getProductList(
+// export function getProductList(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   var resArray: any[] = [];
+//   Category.findById(req.body.categoryid)
+//     .then((category) => {
+//       if (category) {
+//         Promise.all(
+//           category.productid.map((productid) => {
+//             return Product.findById(productid).then((product) => {
+//               if (product && product.available) {
+//                 resArray.push(product);
+//               }
+//             });
+//           })
+//         )
+//           .then(() => {
+//             res.status(200).json({
+//               category,
+//               products: resArray,
+//             });
+//           })
+//           .catch((err) => {
+//             console.log(err);
+//             res.status(500).json({
+//               message: "Internal server error",
+//             });
+//           });
+//       } else {
+//         res.status(404).json({
+//           message: "category not found",
+//         });
+//       }
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(500).json({
+//         message: "Internal server error",
+//       });
+//     });
+// }
+
+/*
+{
+    **OPTIONAL** userid: user id,
+    **OPTIONAL** schoolid: school id,
+    categoryid: category id,
+}
+*/
+
+export async function getProductList(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  var resArray: any[] = [];
-  Category.findById(req.body.categoryid)
-    .then((category) => {
-      if (category) {
-        Promise.all(
-          category.productid.map((productid) => {
-            return Product.findById(productid).then((product) => {
-              if (product && product.available) {
-                resArray.push(product);
-              }
-            });
-          })
-        )
-          .then(() => {
-            res.status(200).json({
-              category,
-              products: resArray,
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-            res.status(500).json({
-              message: "Internal server error",
-            });
-          });
-      } else {
-        res.status(404).json({
-          message: "category not found",
+  let verifyUser = false;
+  if (!req.body.categoryid) {
+    return res.status(401).json({
+      message: "Invalid input",
+    });
+  }
+  await Category.findById(req.body.categoryid).then(async (category) => {
+    console.log(category);
+    if (!category) {
+      console.log("category is null");
+      return res.status(401).json({
+        message: "Category not found",
+      });
+    }
+    if (
+      !category.available ||
+      !category.availabletopublic ||
+      !category.availabletograd
+    ) {
+      if (!req.body.userid) {
+        return res.status(401).json({
+          message: "Permission denied",
         });
       }
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        message: "Internal server error",
+      await authenticateToken(req, res, () => {});
+      console.log(req.body.tokenPayload.subusers);
+      if (!req.body.tokenPayload) return;
+      let today = new Date();
+      for (let i = 0; i < req.body.tokenPayload.subusers.length; i++) {
+        var subuser: any = await getSubuserDataById(
+          req.body.tokenPayload.subusers[i]
+        );
+        let isGrad = subuser?.graddate < today;
+        if (!category.available) {
+          if (
+            subuser.admin ||
+            (subuser.schoolid == req.body.schoolid && subuser.schooladmin)
+          ) {
+            verifyUser = true;
+            break;
+          } else {
+            continue;
+          }
+        }
+        if (!category.availabletograd) {
+          if (
+            subuser.admin ||
+            (subuser.schoolid == req.body.schoolid &&
+              (subuser.schooladmin || !isGrad))
+          ) {
+            verifyUser = true;
+            break;
+          } else {
+            continue;
+          }
+        }
+        if (!category.availabletopublic) {
+          if (subuser.admin || subuser.schoolid == req.body.schoolid) {
+            verifyUser = true;
+            break;
+          }
+        }
+      }
+      if (!verifyUser) {
+        return res.status(401).json({
+          message: "permission denied",
+        });
+      }
+    }
+  });
+  Product.find({ categoryid: req.body.categoryid })
+    .select("-_id")
+    .then((products) => {
+      return res.status(200).json({
+        products,
       });
     });
 }
@@ -216,13 +310,9 @@ export async function getCategoryList(
   if (req.body.userid) {
     await authenticateToken(req, res, () => {});
     console.log(req.body.tokenPayload.subusers);
-    // if (req.body.tokenPayload.subusers.length) {
     query = {
       $or: [],
     };
-    // } else {
-    //   query["availabletopublic"] = true;
-    // }
     if (!req.body.tokenPayload) return;
     let today = new Date();
     for (let i = 0; i < req.body.tokenPayload.subusers.length; i++) {
@@ -299,7 +389,7 @@ export async function getCategoryList(
     });
 }
 
-// TODO: update product information
+// update product information
 /*
   {
     schoolid : school id,
@@ -370,7 +460,7 @@ export function updateProduct(req: Request, res: Response, next: NextFunction) {
   });
 }
 
-// TODO: delete product
+// delete product
 /*
   {
     userid: user id,
