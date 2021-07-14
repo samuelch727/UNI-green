@@ -113,7 +113,7 @@ POST: /api/user/createsubuser
 Token is needed for this request.  
 request body example:
 
-````javascript
+```javascript
 {
   "userid": "60e05b217c789d4600ebc806",
   "schoolid": "60cb22c1e1376625c3b6e203",
@@ -125,20 +125,11 @@ request body example:
   "schooladmin": false, // Only uni-green / school admin have permission to set to true
   "schooluser": false // Only uni-green / school admin have permission to set to true
 }
-request body example:
-
-```json
-{
-  "username": "alex",
-  "password": "alexpassword",
-  "tel": "12345678",
-  "email": "alex@email.com"
-}
-````
+```
 
 return body example:
 
-````javascript
+```javascript
 {
   "userid": "60e05b217c789d4600ebc806",
   "subuser": {
@@ -147,14 +138,44 @@ return body example:
     "name": "Chan Tai Man",
     "sid": "2021-06-30"
   }
-```json
-{
-  "user": {
-    "_id": "60d5f077a10a7012d1c0d240",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MGQ1ZjA3N2ExMGE3MDEyZDFjMGQyNDAiLCJlbWFpbCI6InNhbXVlbEBlbWFpbC5jb20iLCJ1c2VybmFtZSI6InNhbXVlbGNoIiwiaWF0IjoxNjI0NjMzNDYzLCJleHAiOjE2MjQ2MzUyNjN9.FXDVgHWzAV4mole9EPYFwgDgUeJC4bkdOYAHN2rlNi0"
-  }
 }
-````
+```
+
+#### changepassword
+
+Change password for existing user.
+
+```
+POST: /api/user/changepassword
+```
+
+Token is needed for this request.  
+Either username / email is needed to verify user.  
+request body example:
+
+```javascript
+{
+  "username": "alex", // Optional
+  "password": "alexpassword",
+  "email": "alex@email.com", // Optional
+  "newpassword": "12345"
+}
+```
+
+return body example:
+
+```javascript
+{
+  "userid": "60e05b217c789d4600ebc806",
+  "subuser": {
+    "_id": "60e071b8e638244a1723e32c",
+    "schoolid": "60cb22c1e1376625c3b6e203",
+    "name": "Chan Tai Man",
+    "sid": "2021-06-30"
+  }
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWwiOiIxMjM0NTY3OCIsImVtYWlsIjoic2FtdWVsQGVtYWlsLmNvbSIsInVzZXJJRCI6IjYwZDQxZmU4ODRlZjM5ZDM1ZDU4N2YzNiIsInVzZXJuYW1lIjoic2FtdWVsY2giLCJzdWJ1c2VycyI6WyI2MGQ0MjAwZDg0ZWYzOWQzNWQ1ODdmM2IiLCI2MGQ0MjAxNzg0ZWYzOWQzNWQ1ODdmM2YiXSwiaWF0IjoxNjI0NTE0ODk5LCJleHAiOjE2MjQ1MTY2OTl9.bSmhwy1_asRTshZYOfjlMXaDH3dC4bQEIzfjpee_he8"
+}
+```
 
 # School
 
@@ -263,4 +284,8 @@ return body example:
 {
   "message": "School account is deleted."
 }
+```
+
+```
+
 ```
