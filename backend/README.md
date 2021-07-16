@@ -476,10 +476,11 @@ POST: /api/products/product
     **OPTIONAL** "availabletopublic": boolean, // is category available to public? (Create new category only)
     **OPTIONAL** "availabletograd": boolean, // is category available to gradurate student? (Create new category only)
     "products": [ // new products to add
+        "name": String, // Product name
         "stock": Number, // number of stock
         "available": Boolean, // is product available?
         "imgUrl": [String], // imgUrl of product. (Can be empty)
-        "price": mongoose.Types.Decimal128, // price of product
+        "price": Number, // price of product
         "producttype": [{ //product type info
             "typename": typename, // type name. Should exist in category producttype attribute array (example: Size)
             "name": name // name within the type (example: M)
@@ -529,6 +530,16 @@ POST: /api/products/product
 ```
 
 **Error handling**  
+Invalid token error.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "invalid token"
+}
+```
+
 Invalid category id.  
 Code: `401`  
 Content:
@@ -555,7 +566,7 @@ Content:
 
 ```javascript
 {
-  "message": "internal server error"
+  "message": "Internal server error"
 }
 ```
 
@@ -655,5 +666,114 @@ Content:
 ```javascript
 {
   "message": "Category not found"
+}
+```
+
+Internal server error.  
+Code: `500`  
+Content:
+
+```javascript
+{
+  "message": "Internal server error"
+}
+```
+
+### updateProduct
+
+update product information.
+
+```
+PATCH: /api/products/product
+```
+
+**Request body:**
+
+```javascript
+{
+    "schoolid" : school id,
+    "userid": user id,
+    "productid": product id,
+    "product": {
+      "addNumStock": Number, // number of stock to add
+      "available": Boolean, // is product available?
+      "imgUrl": [String], // imgUrl of product. (Can be empty)
+      "price": Number, // price of product
+      "producttype": {
+        "type": String,// type name. Should exist in category producttype attribute array (example: Size)
+        "name": String,// name within the type (example: M)
+      },
+      "name": String, // Product name
+    }
+  }
+```
+
+**Request body example:**
+
+```javascript
+{
+    schoolid: "60cb22c1e1376625c3b6e203",
+    userid: userid,
+    productid: productid,
+    product: {
+        addNumStock: 5,
+        available: true,
+        imgUrl: [],
+        price: 20.0,
+        producttype: {
+          type: "size",
+          name: "l",
+        },
+    },
+    name: "test rename",
+}
+```
+
+**Return body example:**
+
+```javascript
+{
+  "message": "Updated product"
+}
+```
+
+**Error handling**  
+Invalid token error.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "invalid token"
+}
+```
+
+No permission.  
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "Permission denied."
+}
+```
+
+Give porduct not found.
+Code: `401`  
+Content:
+
+```javascript
+{
+  "message": "Product not found"
+}
+```
+
+Internal server error.  
+Code: `500`  
+Content:
+
+```javascript
+{
+  "message": "Internal server error"
 }
 ```

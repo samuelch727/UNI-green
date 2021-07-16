@@ -39,7 +39,7 @@ const productSchema = new mongoose.Schema({
   imgUrl: [{ type: String }],
   price: { type: mongoose.Types.Decimal128, required: true },
   producttype: { type: productTypeSchema },
-  name: { type: String },
+  name: { type: String, required: true },
 });
 
 export default mongoose.model<Product>("Product", productSchema);

@@ -69,7 +69,7 @@ export function createProduct(req: Request, res: Response, next: NextFunction) {
                 console.log("Error when adding product id to category");
                 console.log(err);
                 return res.status(500).json({
-                  message: "internal server error",
+                  message: "Internal server error.",
                 });
               });
           })
@@ -77,7 +77,7 @@ export function createProduct(req: Request, res: Response, next: NextFunction) {
             console.log("Error when adding products");
             console.log(err);
             return res.status(500).json({
-              message: "internal server error",
+              message: "Internal server error.",
             });
           });
       } else {
@@ -91,7 +91,7 @@ export function createProduct(req: Request, res: Response, next: NextFunction) {
       console.log("Error when searching category");
       console.log(err);
       return res.status(500).json({
-        message: "internal server error",
+        message: "Internal server error.",
       });
     });
 }
@@ -177,7 +177,7 @@ export function createCategory(
 //           .catch((err) => {
 //             console.log(err);
 //             res.status(500).json({
-//               message: "Internal server error",
+//               message: "Internal server error.",
 //             });
 //           });
 //       } else {
@@ -189,7 +189,7 @@ export function createCategory(
 //     .catch((err) => {
 //       console.log(err);
 //       res.status(500).json({
-//         message: "Internal server error",
+//         message: "Internal server error.",
 //       });
 //     });
 // }
@@ -385,7 +385,7 @@ export async function getCategoryList(
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({ message: "internal server error" });
+      res.status(500).json({ message: "Internal server error." });
     });
 }
 
@@ -417,7 +417,7 @@ export function updateProduct(req: Request, res: Response, next: NextFunction) {
     }
     if (product?.schoolid != req.body.schoolid) {
       return res.status(401).json({
-        message: "Permission denied",
+        message: "Permission denied.",
       });
     }
     product.stock += req.body.product.addNumStock;
@@ -428,7 +428,7 @@ export function updateProduct(req: Request, res: Response, next: NextFunction) {
       Category.findById(product.categoryid).then((category) => {
         if (!category) {
           console.log("Fail to find category");
-          return res.status(500).json({ message: "internal server error" });
+          return res.status(500).json({ message: "Internal server error." });
         }
         if (
           !category?.producttype.includes(req.body.product.producttype.type)
@@ -437,7 +437,7 @@ export function updateProduct(req: Request, res: Response, next: NextFunction) {
           category.save().catch((err) => {
             console.log("fail to update category");
             console.log(err);
-            return res.status(500).json({ message: "internal server error" });
+            return res.status(500).json({ message: "Internal server error." });
           });
         }
       });
@@ -454,7 +454,7 @@ export function updateProduct(req: Request, res: Response, next: NextFunction) {
       })
       .catch((err) => {
         return res.status(500).json({
-          message: "Internal server error",
+          message: "Internal server error.",
         });
       });
   });
@@ -484,11 +484,11 @@ export function deleteProduct(req: Request, res: Response, next: NextFunction) {
         })
         .catch((err: any) => {
           console.log("error when deleting product", err);
-          return res.status(500).json({ message: "internal server error" });
+          return res.status(500).json({ message: "Internal server error." });
         });
     })
     .catch((err) => {
       console.log("error when finding product", err);
-      return res.status(500).json({ message: "internal server error" });
+      return res.status(500).json({ message: "Internal server error." });
     });
 }
