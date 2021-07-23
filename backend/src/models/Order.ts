@@ -13,9 +13,8 @@ const orderSchema = new mongoose.Schema(
     subOrderid: [
       { type: mongoose.Types.ObjectId, required: true, ref: "SubOrder" },
     ],
-    quantity: { type: Number, required: true },
     status: { type: Number, required: true },
-    completionTime: { type: Date, required: true },
+    completionTime: { type: Date },
   },
   {
     timestamps: true,

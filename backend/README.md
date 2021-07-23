@@ -22,6 +22,16 @@ API documentation for [UNI-green](https://github.com/samuelch727/UNI-green).
         </ul>
     </td>
   </tr>
+  <td valign="top">
+      <li><a href="#Orders">Orders</a></li>
+        <ul>
+          <li><a href="#create-order">create-order</a></li>
+          <li><a href="#create-suborder">create-suborder</a></li>
+          <li><a href="#getsuborders">getsuborders</a></li>
+          <li><a href="#cancel-order">create-suborder</a></li>
+        </ul>
+    </td>
+  </tr>
 </table>
 
 # Users
@@ -436,6 +446,104 @@ return body example:
 }
 ```
 
+# Order
+
+#### create-order
+
+Create new order.
+
+```
+POST: /api/order/create-order
 ```
 
+request body example:
+
+```javascript
+{
+  "userid": "60ee93e5c99a7a0ef0108506",
+  "subOrderid": ["60ee93e5c99a7a0ef0108506"],
+  "status": true,
+  "completionTime": Date,
+}
+```
+
+return body example:
+
+```javascript
+{
+}
+```
+
+#### create-suborder
+
+Create new subOrder for existing order.
+
+```
+POST: /api/order/create-suborder
+```
+
+Token is needed for this request.
+request body example:
+
+```javascript
+{
+}
+```
+
+return body example:
+
+```javascript
+{
+}
+```
+
+#### getsuborders
+
+Get all suborder from order.
+
+```
+GET: /api/order/getsuborders
+```
+
+Token is needed for this request.
+request body example:
+
+```javascript
+{
+}
+```
+
+return body example:
+
+```javascript
+{
+}
+```
+
+#### cancel-order
+
+Cancel the existing order.
+
+```
+PUT: /api/order/cancel-order
+```
+
+Token is needed for this request.
+request body example:
+
+```javascript
+{
+  "userid": "60ee93e5c99a7a0ef0108507",
+  "subOrderid": ["60ee93e5c99a7a0ef0108507"],
+  "status": true,
+  "completionTime": Date,
+}
+```
+
+return body example:
+
+```javascript
+{
+  "message": "The Order Is Canceled Successfully."
+}
 ```

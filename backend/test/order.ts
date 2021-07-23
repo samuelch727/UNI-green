@@ -13,6 +13,7 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { describe, it } from "mocha";
+import { truncate } from "fs";
 dotenv.config({ path: "../src/.env" });
 
 chai.use(chaiHttp);
@@ -65,10 +66,10 @@ describe("Order testing", () => {
                     userid = user._id;
                     subuserid = subuser._id;
                     Order.create({
-                      userid: "testorder",
-                      subOrderid: [],
+                      userid: "60ee93e5c99a7a0ef0108506",
+                      subOrderid: ["60ee93e5c99a7a0ef0108506"],
                       status: true,
-                      completionTime: "time",
+                      completionTime: Date,
                     });
                     done();
                   });
@@ -84,8 +85,10 @@ describe("Order testing", () => {
   describe("/POST create new order", () => {
     it("Test creating order.", (done) => {
       let request = {
-        userid: "testorder",
-        subOrderid: ["nkdjbjcbjkn"],
+        userid: "60ee93e5c99a7a0ef0108506",
+        subOrderid: ["60ee93e5c99a7a0ef0108506"],
+        status: true,
+        completionTime: Date,
       };
       chai
         .request(server)
@@ -95,16 +98,20 @@ describe("Order testing", () => {
         .end((err, res) => {
           console.log(res.body);
           res.should.have.status(201);
-          res.body.should.have
+          res.body.should.have.property("createdOrder");
+          res.body.createdOrder.should.have.property("_id");
+          /*res.body.should.have
             .property("message")
-            .eql("Successfully added order");
+            .eql("Successfully added order"); */
           done();
         });
     });
 
     it("Test create order with missing userid", (done) => {
       let request = {
-        subOrderid: ["nkdjbjcbjkn"],
+        subOrderid: ["60ee93e5c99a7a0ef0108506"],
+        status: true,
+        completionTime: Date,
       };
       chai
         .request(server)
@@ -112,7 +119,7 @@ describe("Order testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
-          console.log(res);
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -121,7 +128,9 @@ describe("Order testing", () => {
 
     it("Test create order with missing subOrderid", (done) => {
       let request = {
-        userid: "testorder",
+        userid: "60ee93e5c99a7a0ef0108506",
+        status: true,
+        completionTime: Date,
       };
       chai
         .request(server)
@@ -129,7 +138,7 @@ describe("Order testing", () => {
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
-          console.log(res);
+          console.log(res.body);
           res.should.have.status(400);
           res.body.should.have.property("message").eql("Invalid input");
           done();
@@ -141,7 +150,7 @@ describe("Order testing", () => {
     var orderid: any, token: any;
     it("Test create sub order", (done) => {
       var request: any = {
-        userid: "testSubOrder",
+        userid: "60ee93e5c99a7a0ef0108506",
         quantity: "2",
         productType: "test product type",
         status: true,
@@ -155,7 +164,6 @@ describe("Order testing", () => {
           console.log(res.body);
           res.should.have.status(201);
           res.body.should.have.property("order");
-          res.body.order.should.have.property("token");
           res.body.order.should.have.property("suborders");
           res.body.order.suborders[0].should.have.property("_id");
           res.body.order.suborders[0].should.have
@@ -191,7 +199,7 @@ describe("Order testing", () => {
     });
     it("Test create suborder with invalid input (missing quantity)", (done) => {
       let request = {
-        userid: "testSubOrder",
+        userid: "60ee93e5c99a7a0ef0108506",
         productType: "test product type",
         status: true,
       };
@@ -208,7 +216,7 @@ describe("Order testing", () => {
     });
     it("Test create suborder with invalid input (missing productType)", (done) => {
       let request = {
-        userid: "testSubOrder",
+        userid: "60ee93e5c99a7a0ef0108506",
         quantity: "2",
         status: true,
       };
@@ -231,14 +239,14 @@ describe("Order testing", () => {
   describe("/PUT cancel order", () => {
     it("Test cancel order", (done) => {
       let request = {
-        userid: "testSubOrder",
-        quantity: "2",
-        productType: "test product type",
+        userid: "60ee93e5c99a7a0ef0108506",
+        subOrderid: ["60ee93e5c99a7a0ef0108506"],
         status: true,
+        completionTime: Date,
       };
       chai
         .request(server)
-        .put("/api/order/cancelorder")
+        .put("/api/order/cancel-order")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
@@ -251,80 +259,22 @@ describe("Order testing", () => {
         });
     });
 
-    it("Test delete non exist order with corresponding userid", (done) => {
+    it("Test delete non exist order", (done) => {
       let request = {
-        userid: "fakeSubOrder",
-        quantity: "2",
-        productType: "test product type",
+        userid: "60ee93e5c99a7a0ef0108507",
+        subOrderid: ["60ee93e5c99a7a0ef0108507"],
         status: true,
+        completionTime: Date,
       };
       chai
         .request(server)
-        .put("/api/order/cancelorder")
+        .put("/api/order/cancel-order")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
           console.log(res.body);
           res.should.have.status(401);
           res.body.should.have.property("message").eql("Permission denied.");
-          done();
-        });
-    });
-    it("Test delete order with missing userid", (done) => {
-      let request = {
-        userid: "testSubOrder",
-        quantity: "2",
-        productType: "test product type",
-        status: true,
-      };
-      chai
-        .request(server)
-        .put("/api/order/cancelorder")
-        .set({ authorization: "Bearer " + token })
-        .send(request)
-        .end((err, res) => {
-          console.log(res.body);
-          res.should.have.status(422);
-          res.body.should.have.property("message").eql("Invalid input");
-          done();
-        });
-    });
-    it("Test delete order with missing quantity", (done) => {
-      let request = {
-        userid: "testSubOrder",
-        quantity: "2",
-        productType: "test product type",
-        status: true,
-      };
-      chai
-        .request(server)
-        .put("/api/order/cancelorder")
-        .set({ authorization: "Bearer " + token })
-        .send(request)
-        .end((err, res) => {
-          console.log(res.body);
-          res.should.have.status(422);
-          res.body.should.have.property("message").eql("Invalid input");
-          done();
-        });
-    });
-
-    it("Test delete order with missing productType", (done) => {
-      let request = {
-        userid: "testSubOrder",
-        quantity: "2",
-        productType: "test product type",
-        status: true,
-      };
-      chai
-        .request(server)
-        .put("/api/order/cancelorder")
-        .set({ authorization: "Bearer " + token })
-        .send(request)
-        .end((err, res) => {
-          console.log(res.body);
-          res.should.have.status(422);
-          res.body.should.have.property("message").eql("Invalid input");
           done();
         });
     });

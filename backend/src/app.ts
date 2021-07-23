@@ -22,12 +22,15 @@ require("./models/Product");
 require("./models/Request");
 require("./models/School");
 require("./models/SubUser");
+require("./models/SubOrder");
 
 const usersRouter = require("./routes/user");
 app.use("/api/user/", usersRouter);
 const schoolsRouter = require("./routes/school");
 app.use("/api/school/", schoolsRouter);
 //For front end -- Require user(school)'s input: name, description, iconUrl, address, tel
+const ordersRouter = require("./routes/order");
+app.use("/api/order/", ordersRouter);
 
 app.listen(5000, () => {
   console.log("Server running");

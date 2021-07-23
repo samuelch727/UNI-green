@@ -10,6 +10,16 @@ export function addOrder(
   res: express.Response,
   next: express.NextFunction
 ) {
+  if (!req.body.userid) {
+    return res.status(400).json({
+      message: "Invalid input",
+    });
+  }
+  if (!req.body.subOrderid) {
+    return res.status(400).json({
+      message: "Invalid input",
+    });
+  }
   Order.findOne({ orderid: req.body.orderid }).then(async (orderid: any) => {
     if (!orderid) {
       //create new order
@@ -17,9 +27,11 @@ export function addOrder(
         userid: req.body.userid,
         subOrderid: [req.body.subOrderid],
         status: req.body.status,
-        completionTime: req.body.completionTime,
+        completionTime: req.body.completionTime ?? Date.now(),
       });
-      if (newOrder.validateSync()) {
+      let err = newOrder.validateSync();
+      if (err) {
+        console.log(err);
         return res.status(400).json({
           message: "Invalid input",
         });
@@ -35,7 +47,6 @@ export function addOrder(
         // TODO: save user data
 
         console.log(createdOrder);
-        next();
         return res.status(201).json({
           createdOrder,
           message: "Order Created",
@@ -166,7 +177,6 @@ export function addSubOrder(
         };
         req.body.suborder = suborder;
         next();
-        return;
       } catch (err: any) {
         return res.status(401).json({
           message: err,

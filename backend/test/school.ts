@@ -83,11 +83,38 @@ describe("School testing", () => {
       chai
         .request(server)
         .post("/api/school/signup")
-        .set({ authorization: "Bearer " + token })
+        //.set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
           console.log(res.body);
           res.should.have.status(201);
+          res.body.should.have.property("school");
+          res.body.user.should.have.property("_id");
+          res.body.user.should.have.property("token");
+          res.body.should.have.property("message").eql("School Created");
+          done();
+        });
+    });
+
+    it("Test create school that already exist.", (done) => {
+      let request = {
+        name: "CUHK",
+        description: "run la",
+        iconUrl: "njnjnnndjfjjfjf",
+        address: "Loscyr PArk",
+        tel: "92876543",
+        userid,
+        subuserid,
+        schoolid: "60cb22c1e1376625c3b6e203",
+      };
+      chai
+        .request(server)
+        .post("/api/school/signup")
+        .set({ authorization: "Bearer " + token })
+        .send(request)
+        .end((err, res) => {
+          console.log(res.body);
+          res.should.have.status(401);
           res.body.should.have
             .property("message")
             .eql("School Already Created");
@@ -319,7 +346,7 @@ describe("School testing", () => {
       };
       chai
         .request(server)
-        .put("/api/school/delect-school")
+        .put("/api/school/delete-school")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {
@@ -344,7 +371,7 @@ describe("School testing", () => {
       };
       chai
         .request(server)
-        .put("/api/school/delect-school")
+        .put("/api/school/delete-school")
         .set({ authorization: "Bearer " + token })
         .send(request)
         .end((err, res) => {

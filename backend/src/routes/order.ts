@@ -20,6 +20,6 @@ router.post(
   updateSubOrderList
 );
 router.get("/getsuborders", authenticateToken, getSubOrderData, sendOrderData);
-router.put("/cancelorder", authenticateToken, cancelOrder);
+router.put("/cancel-order", authenticateToken, cancelOrder);
 
 module.exports = router;
