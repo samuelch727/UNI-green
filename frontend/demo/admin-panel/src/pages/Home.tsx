@@ -3,13 +3,19 @@ import { useRouter } from "next/router";
 import { Link, Redirect, withRouter } from "react-router-dom";
 import { eventNames } from "process";
 
-export default function Home() {
+export default function Home(props: any) {
   return (
     <div
       style={{
+        ...props.style,
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-        // width: "100vw",
+        gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+        columnGap: "15px",
+        rowGap: "15px",
+        placeItems: "center",
+        margin: "0 auto",
+        maxWidth: "1080px",
+        // width: "auto",
         // height: "100vh",
       }}
     >
@@ -25,7 +31,7 @@ export default function Home() {
           alt="Account Managemant"
           style={{ width: "100%" }}
         />
-        <Link to="/Account-Managemant">
+        <Link to="/account-managemant">
           <button className="btn btn-primary">Account Managemant</button>
         </Link>
       </div>
@@ -33,7 +39,7 @@ export default function Home() {
         style={{
           position: "relative",
           width: "150px",
-          height: "150px",
+          // height: "150px",
         }}
       >
         <img
@@ -41,7 +47,7 @@ export default function Home() {
           alt="Order Managemant"
           style={{ width: "100%" }}
         />
-        <Link to="/Order-Managemant">
+        <Link to="/order-managemant">
           <button className="btn btn-primary">Order Managemant</button>
         </Link>
       </div>
@@ -49,15 +55,15 @@ export default function Home() {
         style={{
           position: "relative",
           width: "150px",
-          height: "150px",
+          // height: "150px",
         }}
       >
         <img
-          src="person_black_36dp.svg"
+          src="./person_black_36dp.svg"
           alt="Product Managemant"
           style={{ width: "100%" }}
         />
-        <Link to="/Product-Managemant">
+        <Link to="/product-managemant">
           <button className="btn btn-primary">Product Managemant</button>
         </Link>
       </div>
@@ -65,7 +71,7 @@ export default function Home() {
         style={{
           position: "relative",
           width: "150px",
-          height: "150px",
+          // height: "150px",
         }}
       >
         <img
@@ -73,7 +79,7 @@ export default function Home() {
           alt="Financial Report"
           style={{ width: "100%" }}
         />
-        <Link to="/Financial-Report">
+        <Link to="/financial-report">
           <button className="btn btn-primary">Financial Report</button>
         </Link>
       </div>
