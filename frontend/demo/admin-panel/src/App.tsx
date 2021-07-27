@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import NavBar from "./components/NavBar";
 import AccountManage from "./pages/AccountManage";
 import CreateUserAccount from "./pages/accountCreation/CreateUserAccount";
+import UnknowPath from "./pages/UnknowPath";
 import {
   BrowserRouter as Router,
   Switch,
@@ -33,7 +34,7 @@ function App() {
             <CreateUserAccount />
           </Route>
           <Route path="*">
-            <Redirect to="/home" />
+            <UnknowPath />
           </Route>
         </Switch>
       </Router>

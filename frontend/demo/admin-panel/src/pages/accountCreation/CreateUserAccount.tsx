@@ -48,8 +48,3 @@ export default function Home(props: any) {
     </div>
   );
 }
-function autoFill(
-  autoFill: any
-): import("csstype").Property.GridTemplateColumns<string | number> | undefined {
-  throw new Error("Function not implemented.");
-}
