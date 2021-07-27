@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import NavBar from "./components/NavBar";
 import AccountManage from "./pages/AccountManage";
+import CreateUserAccount from "./pages/accountCreation/CreateUserAccount";
 import {
   BrowserRouter as Router,
   Switch,
@@ -27,6 +28,9 @@ function App() {
           </Route>
           <Route exact path="/account-managemant">
             <AccountManage />
+          </Route>
+          <Route exact path="/account-managemant/create-user-account">
+            <CreateUserAccount />
           </Route>
           <Route path="*">
             <Redirect to="/home" />
