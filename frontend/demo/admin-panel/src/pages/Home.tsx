@@ -9,7 +9,7 @@ export default function Home(props: any) {
       style={{
         ...props.style,
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
         columnGap: "15px",
         rowGap: "15px",
         placeItems: "center",

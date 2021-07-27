@@ -4,6 +4,7 @@ import "./App.css";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import NavBar from "./components/NavBar";
+import AccountManage from "./pages/AccountManage";
 import {
   BrowserRouter as Router,
   Switch,
@@ -22,9 +23,14 @@ function App() {
           </Route>
           <Route exact path="/home">
             <NavBar />
-            <Home style={{ paddingTop: "60px" }} />
+            <Home />
           </Route>
-          <Route render={() => <Redirect to="/home" />}></Route>
+          <Route exact path="/account-managemant">
+            <AccountManage />
+          </Route>
+          <Route path="*">
+            <Redirect to="/home" />
+          </Route>
         </Switch>
       </Router>
     </div>
