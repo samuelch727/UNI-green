@@ -4,7 +4,7 @@ import { Link, Redirect, withRouter } from "react-router-dom";
 import { eventNames } from "process";
 import NavBar from "../../components/NavBar";
 
-export default function Home(props: any) {
+export default function CreateUserAccount(props: any) {
   return (
     <div>
       <NavBar />
@@ -30,8 +30,10 @@ export default function Home(props: any) {
             // height: "250",
           }}
         >
-          <Link to="/create-user-account">
-            <button className="btn btn-primary">Create User Account</button>
+          <Link to="/account-managemant/create-user-account">
+            <button className="btn btn-primary" disabled>
+              Upload Excel
+            </button>
           </Link>
         </div>
         <div
@@ -40,8 +42,8 @@ export default function Home(props: any) {
             // width: "150px",
           }}
         >
-          <Link to="/verify-user-account">
-            <button className="btn btn-primary">Verify User Account</button>
+          <Link to="/account-managemant/manual-create-account">
+            <button className="btn btn-primary">Manual Create</button>
           </Link>
         </div>
       </div>
