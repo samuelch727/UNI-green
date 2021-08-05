@@ -6,7 +6,9 @@ import Home from "./pages/Home";
 import NavBar from "./components/NavBar";
 import AccountManage from "./pages/AccountManage";
 import CreateUserAccount from "./pages/accountCreation/CreateUserAccount";
+import ManualCreateAccount from "./pages/accountCreation/ManualCreateAccount";
 import UnknowPath from "./pages/UnknowPath";
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -32,6 +34,9 @@ function App() {
           </Route>
           <Route exact path="/account-managemant/create-user-account">
             <CreateUserAccount />
+          </Route>
+          <Route exact path="/account-managemant/manual-create-account">
+            <ManualCreateAccount />
           </Route>
           <Route path="*">
             <UnknowPath />
