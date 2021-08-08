@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import NavBar from "./components/NavBar";
 import AccountManage from "./pages/AccountManage";
 import CreateUserAccount from "./pages/accountCreation/CreateUserAccount";
+import OrderManagement from "./pages/orderManagement/OrderManagement";
 import ManualCreateAccount from "./pages/accountCreation/ManualCreateAccount";
 import UnknowPath from "./pages/UnknowPath";
 
@@ -16,6 +17,8 @@ import {
   Link,
   Redirect,
 } from "react-router-dom";
+import CreateNewOrder from "./pages/orderManagement/CreateNewOrder";
+import EditOrder from "./pages/orderManagement/EditOrder";
 
 function App() {
   return (
@@ -34,6 +37,15 @@ function App() {
           </Route>
           <Route exact path="/account-managemant/create-user-account">
             <CreateUserAccount />
+          </Route>
+          <Route exact path="/order-managemant">
+            <OrderManagement />
+          </Route>
+          <Route exact path="/order-managemant/create-order">
+            <CreateNewOrder />
+          </Route>
+          <Route exact path="/order-managemant/edit-order">
+            <EditOrder />
           </Route>
           <Route exact path="/account-managemant/manual-create-account">
             <ManualCreateAccount />
