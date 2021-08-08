@@ -19,6 +19,8 @@ import {
 } from "react-router-dom";
 import CreateNewOrder from "./pages/orderManagement/CreateNewOrder";
 import EditOrder from "./pages/orderManagement/EditOrder";
+import VerifyAccount from "./pages/accountCreation/VerifyAccount";
+import EditUser from "./pages/accountCreation/EditUser";
 
 function App() {
   return (
@@ -49,6 +51,12 @@ function App() {
           </Route>
           <Route exact path="/account-managemant/manual-create-account">
             <ManualCreateAccount />
+          </Route>
+          <Route exact path="/verify-user-account">
+            <VerifyAccount />
+          </Route>
+          <Route exact path="/edit-user">
+            <EditUser />
           </Route>
           <Route path="*">
             <UnknowPath />
