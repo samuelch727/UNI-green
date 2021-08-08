@@ -18,6 +18,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import CreateNewOrder from "./pages/orderManagement/CreateNewOrder";
+import EditOrder from "./pages/orderManagement/EditOrder";
 
 function App() {
   return (
@@ -42,6 +43,9 @@ function App() {
           </Route>
           <Route exact path="/order-managemant/create-order">
             <CreateNewOrder />
+          </Route>
+          <Route exact path="/order-managemant/edit-order">
+            <EditOrder />
           </Route>
           <Route exact path="/account-managemant/manual-create-account">
             <ManualCreateAccount />
