@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import NavBar from "../../components/NavBar";
+import { Link } from "react-router-dom";
 
 function OrderListDetail(props: any) {
   return (
@@ -367,13 +368,15 @@ function OrderDetail(props: any) {
               <div className="col">4</div>
             </div>
             <div className="row justify-content-end">
-              <button
-                type="button"
-                className="col-4 btn btn-outline-secondary"
-                style={{ marginRight: "15px" }}
-              >
-                Edit User Info
-              </button>
+              <Link to="/edit-user" className="col-6">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  style={{ marginRight: "15px" }}
+                >
+                  Edit User Info
+                </button>
+              </Link>
             </div>
           </div>
         </div>
