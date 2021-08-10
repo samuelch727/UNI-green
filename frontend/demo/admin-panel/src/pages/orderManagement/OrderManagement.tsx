@@ -4,13 +4,11 @@ import { Link, Redirect, withRouter } from "react-router-dom";
 import { eventNames } from "process";
 import NavBar from "../../components/NavBar";
 
-export default function CreateUserAccount(props: any) {
+export default function Home(props: any) {
   return (
     <div>
       <NavBar />
-      <h3 style={{ textAlign: "center", padding: "10px" }}>
-        Create User Account
-      </h3>
+      <h3 style={{ textAlign: "center", padding: "10px" }}>Order Managemant</h3>
 
       <div
         style={{
@@ -30,10 +28,8 @@ export default function CreateUserAccount(props: any) {
             // height: "250",
           }}
         >
-          <Link to="/account-managemant/create-user-account">
-            <button className="btn btn-primary" disabled>
-              Upload Excel
-            </button>
+          <Link to="/order-managemant/create-order">
+            <button className="btn btn-primary">Create Order</button>
           </Link>
         </div>
         <div
@@ -42,8 +38,8 @@ export default function CreateUserAccount(props: any) {
             // width: "150px",
           }}
         >
-          <Link to="/account-managemant/manual-create-account">
-            <button className="btn btn-primary">Manual Create</button>
+          <Link to="/order-managemant/edit-order">
+            <button className="btn btn-primary">Edit Order</button>
           </Link>
         </div>
       </div>
